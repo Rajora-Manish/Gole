@@ -813,6 +813,7 @@ footer p{
     display:none;
   }
 }
+
 /* BIRTHDAY LOCK */
 
 #birthdayLock{
@@ -938,7 +939,6 @@ footer p{
   }
 
 }
-
 </style>
 </head>
 
@@ -967,6 +967,7 @@ footer p{
     </p>
 
     <div class="lock-countdown">
+
       <div>
         <strong id="lockDays">00</strong>
         <small>DAYS</small>
@@ -986,6 +987,7 @@ footer p{
         <strong id="lockSeconds">00</strong>
         <small>SECONDS</small>
       </div>
+
     </div>
 
     <div class="lock-note">
@@ -996,7 +998,6 @@ footer p{
 
 </div>
 
-
 <div class="progress" id="progress"></div>
 
 <div class="cursor-glow" id="cursorGlow"></div>
@@ -1005,7 +1006,6 @@ footer p{
 <div class="balloon"></div>
 <div class="balloon"></div>
 <div class="balloon"></div>
-
 
 <!-- INTRO -->
 <div class="intro" id="intro">
@@ -1033,7 +1033,6 @@ footer p{
 
 </div>
 
-
 <!-- HERO -->
 <section class="hero">
 
@@ -1052,10 +1051,13 @@ footer p{
       TODAY IS OFFICIALLY GOLE DAY ✨
     </p>
 
+<p class="hero-sub">
+      SCROLL DOWN🔻
+    </p>
+
   </div>
 
 </section>
-
 
 <!-- MESSAGE -->
 <section class="section message reveal">
@@ -1089,12 +1091,15 @@ footer p{
         stories to tell.
       </p>
 
+<p class="hero-sub">
+      SCROLL DOWN🔻
+    </p>
+
     </div>
 
   </div>
 
 </section>
-
 
 <!-- COUNTDOWN -->
 <section class="section countdown-section reveal">
@@ -1129,10 +1134,13 @@ footer p{
       <span class="time-label">SECONDS</span>
     </div>
 
+<p class="hero-sub">
+          SCROLL DOWN🔻
+    </p>
+
   </div>
 
 </section>
-
 
 <!-- GIFT -->
 <section class="section gift-section reveal">
@@ -1178,10 +1186,13 @@ footer p{
 
     </div>
 
+<p class="hero-sub">
+      SCROLL DOWN🔻
+    </p>
+
   </div>
 
 </section>
-
 
 <!-- CAKE -->
 <section class="section cake-section reveal">
@@ -1210,13 +1221,18 @@ footer p{
   </p>
 
   <div class="wish" id="wish">
+
     <div class="wish-text">
       WISH LOCKED IN ✨
     </div>
+
+<p class="hero-sub">
+      SCROLL DOWN🔻
+    </p>
+
   </div>
 
 </section>
-
 
 <!-- FINAL -->
 <section class="section final reveal">
@@ -1246,7 +1262,6 @@ footer p{
 
 </section>
 
-
 <footer>
 
   <h3>LARA RAWAT</h3>
@@ -1261,7 +1276,6 @@ footer p{
 
 </footer>
 
-
 <script>
 
 /* START */
@@ -1270,8 +1284,6 @@ function startSite(){
   document
     .getElementById("intro")
     .classList.add("hide");
-
-  setTimeout(createConfetti,500);
 
 }
 
@@ -1406,9 +1418,10 @@ function openGift(){
 
     giftBurst();
 
-    setTimeout(createConfetti,300);
+    createConfetti();
 
   }
+
 }
 
 function giftBurst(){
@@ -1585,21 +1598,9 @@ window.addEventListener("scroll",()=>{
 });
 
 
-/* BIRTHDAY AUTO CELEBRATION */
-const today=new Date();
-
-if(
-  today.getMonth()===8 &&
-  today.getDate()===18
-){
-
-  setTimeout(createConfetti,2000);
-
-}
 /* BIRTHDAY LOCK */
-
 const unlockTime =
-  new Date("September 11, 2026 14:08:00").getTime();
+  new Date("September 11, 2026 14:17:00").getTime();
 
 function updateLock(){
 
@@ -1612,8 +1613,6 @@ function updateLock(){
     document
       .getElementById("birthdayLock")
       .classList.add("unlock");
-
-    createConfetti();
 
     return;
   }
@@ -1645,6 +1644,7 @@ function updateLock(){
 
   document.getElementById("lockSeconds").innerText =
     String(seconds).padStart(2,"0");
+
 }
 
 updateLock();
