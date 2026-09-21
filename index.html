@@ -105,7 +105,7 @@
             background: #0b0f19;
             border-radius: 12px;
             padding: 15px;
-            min-height: 250px;
+            min-height: 260px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -113,21 +113,23 @@
             border: 1px dashed rgba(255, 255, 255, 0.1);
         }
 
-        /* Full Chess Board Style (8x8) */
+        /* Chess Board Styles (8x8 Playable) */
         .chess-board-full {
             display: grid;
             grid-template-columns: repeat(8, 32px);
             grid-template-rows: repeat(8, 32px);
             border: 2px solid #374151;
             border-radius: 4px;
+            margin-bottom: 8px;
         }
         .chess-tile {
             width: 32px; height: 32px;
             display: flex; justify-content: center; align-items: center;
-            font-size: 1.1rem; cursor: pointer;
+            font-size: 1.1rem; cursor: pointer; user-select: none;
         }
         .c-light { background: #f0d9b5; color: #000; }
         .c-dark { background: #b58863; color: #000; }
+        .c-selected { background: #38bdf8 !important; }
 
         /* Candy Match Grid */
         .candy-grid-real {
@@ -148,7 +150,7 @@
         .action-btn {
             background: #10b981; color: white; border: none; padding: 6px 14px;
             border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.8rem;
-            margin-top: 10px;
+            margin-top: 8px;
         }
         .action-btn:hover { background: #059669; }
 
@@ -172,7 +174,7 @@
 
     <div class="card">
         <h1>We're Leveling Up</h1>
-        <p>Our site is under maintenance. Enjoy playing original arcade games while you wait!</p>
+        <p>Our site is under maintenance. Play these interactive games while you wait!</p>
         
         <div class="arcade-box">
             <div class="arcade-title">🎮 Arcade Center</div>
@@ -201,17 +203,17 @@
         function loadGame(type) {
             const screen = document.getElementById('gameScreen');
             if(type === 'chess') {
-                renderFullChess();
+                initChessGame();
             } else if(type === 'candy') {
                 renderCandyCrush();
             } else if(type === 'coin') {
                 screen.innerHTML = `
-                    <p style="color:#facc15; font-weight:600; margin-bottom:8px;">Flip Coin Challenge</p>
+                    <p style="color:#facc15; font-weight:600; margin-bottom:8px;">Flip Coin (Human Only)</p>
                     <div style="display:flex; gap:10px; margin-bottom:10px;">
                         <button class="action-btn" style="background:#3b82f6;" onclick="playCoin('Heads')">Heads 🪙</button>
                         <button class="action-btn" style="background:#ec4899;" onclick="playCoin('Tails')">Tails 🪙</button>
                     </div>
-                    <div id="coinResult" style="font-size:0.9rem; color:#fff; min-height:24px;"></div>
+                    <div id="coinResult" style="font-size:1rem; color:#fff; min-height:28px; font-weight:bold;"></div>
                 `;
             } else if(type === 'dice') {
                 screen.innerHTML = `
@@ -222,35 +224,90 @@
             }
         }
 
-        /* --- 1. FULL CHESS GAME (8x8 Standard) --- */
-        function renderFullChess() {
+        /* --- 1. FUNCTIONAL CHESS (Human vs AI) --- */
+        let chessBoard = [
+            ['♜','♞','♝','♛','♚','♝','♞','♜'],
+            ['♟','♟','♟','♟','♟','♟','♟','♟'],
+            ['','','','','','','',''],
+            ['','','','','','','',''],
+            ['','','','','','','',''],
+            ['','','','','','','',''],
+            ['♙','♙','♙','♙','♙','♙','♙','♙'],
+            ['♖','♘','♗','♕','♔','♗','♘','♖']
+        ];
+        let selectedPiece = null;
+
+        function initChessGame() {
+            renderChessUI();
+        }
+
+        function renderChessUI() {
             const screen = document.getElementById('gameScreen');
             screen.innerHTML = `
-                <p style="color:#38bdf8; font-weight:600; margin-bottom:5px;">Full Chess Board (Standard Setup)</p>
-                <div class="chess-board-full" id="fullChessGrid"></div>
-                <div style="color:#10b981; font-size:0.75rem; margin-top:5px;">White to play (Standard Arcade View)</div>
+                <p style="color:#38bdf8; font-weight:600; margin-bottom:3px;">Chess (You: White, AI: Black)</p>
+                <div class="chess-board-full" id="chessGridUI"></div>
+                <div id="chessMsg" style="color:#10b981; font-size:0.75rem;">Your turn: Click your piece (White)</div>
             `;
-            const grid = document.getElementById('fullChessGrid');
-            const initialBoard = [
-                ['♜','♞','♝','♛','♚','♝','♞','♜'],
-                ['♟','♟','♟','♟','♟','♟','♟','♟'],
-                ['','','','','','','',''],
-                ['','','','','','','',''],
-                ['','','','','','','',''],
-                ['','','','','','','',''],
-                ['♙','♙','♙','♙','♙','♙','♙','♙'],
-                ['♖','♘','♗','♕','♔','♗','♘','♖']
-            ];
-
+            let grid = document.getElementById('chessGridUI');
             for(let r=0; r<8; r++) {
                 for(let c=0; c<8; c++) {
                     let tile = document.createElement('div');
                     tile.className = `chess-tile ${(r+c)%2 === 0 ? 'c-light' : 'c-dark'}`;
-                    tile.innerText = initialBoard[r][c];
+                    tile.innerText = chessBoard[r][c];
+                    tile.onclick = () => onChessTileClick(r, c);
                     grid.appendChild(tile);
                 }
             }
         }
+
+        function onChessTileClick(r, c) {
+            let msg = document.getElementById('chessMsg');
+            let clickedVal = chessBoard[r][c];
+            // White pieces check
+            const whitePieces = ['♙', '♖', '♘', '♗', '♕', '♔'];
+
+            if(!selectedPiece) {
+                if(whitePieces.includes(clickedVal)) {
+                    selectedPiece = {r, c};
+                    msg.innerText = "Piece selected. Click destination cell.";
+                } else {
+                    msg.innerText = "Please select your own white piece!";
+                }
+            } else {
+                // Move piece
+                chessBoard[r][c] = chessBoard[selectedPiece.r][selectedPiece.c];
+                chessBoard[selectedPiece.r][selectedPiece.c] = '';
+                selectedPiece = null;
+                renderChessUI();
+                msg.innerText = "AI is thinking...";
+                
+                setTimeout(makeAIMove, 700);
+            }
+        }
+
+        function makeAIMove() {
+            // Simple automated black piece move simulation
+            let blackPieces = [];
+            const blackSymbols = ['♟', '♜', '♞', '♝', '♛', '♚'];
+            for(let r=0; r<8; r++) {
+                for(let c=0; c<8; c++) {
+                    if(blackSymbols.includes(chessBoard[r][c])) {
+                        blackPieces.push({r, c});
+                    }
+                }
+            }
+            if(blackPieces.length > 0) {
+                let p = blackPieces[Math.floor(Math.random() * blackPieces.length)];
+                let targetR = p.r + 1;
+                if(targetR < 8 && chessBoard[targetR][p.c] === '') {
+                    chessBoard[targetR][p.c] = chessBoard[p.r][p.c];
+                    chessBoard[p.r][p.c] = '';
+                }
+            }
+            renderChessUI();
+            document.getElementById('chessMsg').innerText = "Your turn (White)";
+        }
+
 
         /* --- 2. CANDY CRUSH MATCH PUZZLE --- */
         let candyScore = 0;
@@ -279,15 +336,16 @@
             }
         }
 
-        /* --- 3. FLIP COIN & ROLL DICE (Original Simple Format) --- */
+
+        /* --- 3. FLIP COIN (Human Only) & ROLL DICE --- */
         function playCoin(userChoice) {
             let outcome = Math.random() < 0.5 ? 'Heads' : 'Tails';
             let res = document.getElementById('coinResult');
             if(userChoice === outcome) {
-                res.innerHTML = `Result: <b>${outcome}</b> — You Won! 🎉`;
+                res.innerHTML = `Coin landed on <b>${outcome}</b>! You guessed right! 🎉`;
                 res.style.color = '#10b981';
             } else {
-                res.innerHTML = `Result: <b>${outcome}</b> — Computer Won! 🤖`;
+                res.innerHTML = `Coin landed on <b>${outcome}</b>! Better luck next time!`;
                 res.style.color = '#f43f5e';
             }
         }
