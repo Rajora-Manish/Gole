@@ -105,7 +105,7 @@
             background: #0b0f19;
             border-radius: 12px;
             padding: 15px;
-            min-height: 240px;
+            min-height: 250px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -113,43 +113,37 @@
             border: 1px dashed rgba(255, 255, 255, 0.1);
         }
 
-        /* Chess Board Styles */
-        .chess-container {
+        /* Full Chess Board Style (8x8) */
+        .chess-board-full {
             display: grid;
-            grid-template-columns: repeat(4, 45px);
-            grid-template-rows: repeat(4, 45px);
-            gap: 1px;
-            background: #374151;
-            padding: 2px;
-            border-radius: 6px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            grid-template-columns: repeat(8, 32px);
+            grid-template-rows: repeat(8, 32px);
+            border: 2px solid #374151;
+            border-radius: 4px;
         }
-        .chess-square {
-            width: 45px; height: 45px;
+        .chess-tile {
+            width: 32px; height: 32px;
             display: flex; justify-content: center; align-items: center;
-            font-size: 1.5rem; cursor: pointer; user-select: none;
+            font-size: 1.1rem; cursor: pointer;
         }
-        .light { background: #e5e7eb; color: #111; }
-        .dark { background: #4b5563; color: #fff; }
-        .selected { background: #38bdf8 !important; }
+        .c-light { background: #f0d9b5; color: #000; }
+        .c-dark { background: #b58863; color: #000; }
 
-        /* Candy Match Styles */
-        .candy-board {
+        /* Candy Match Grid */
+        .candy-grid-real {
             display: grid;
             grid-template-columns: repeat(4, 45px);
             gap: 6px;
         }
-        .candy-tile {
+        .candy-box-tile {
             width: 45px; height: 45px;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 10px;
             display: flex; justify-content: center; align-items: center;
             font-size: 1.4rem; cursor: pointer;
-            transition: transform 0.1s, background 0.2s;
         }
-        .candy-tile:hover { background: rgba(255, 255, 255, 0.15); }
-        .candy-tile.matched { transform: scale(0.8); opacity: 0.3; }
+        .candy-box-tile:hover { background: rgba(255, 255, 255, 0.15); }
 
         .action-btn {
             background: #10b981; color: white; border: none; padding: 6px 14px;
@@ -178,13 +172,13 @@
 
     <div class="card">
         <h1>We're Leveling Up</h1>
-        <p>Our site is under maintenance. Play these interactive mini-games while you wait!</p>
+        <p>Our site is under maintenance. Enjoy playing original arcade games while you wait!</p>
         
         <div class="arcade-box">
-            <div class="arcade-title">🎮 Arcade Center (Human vs AI)</div>
+            <div class="arcade-title">🎮 Arcade Center</div>
             <div class="game-grid">
-                <button class="game-btn" onclick="loadGame('chess')">Mini Chess</button>
-                <button class="game-btn" onclick="loadGame('candy')">Candy Match</button>
+                <button class="game-btn" onclick="loadGame('chess')">Chess</button>
+                <button class="game-btn" onclick="loadGame('candy')">Candy Crush</button>
                 <button class="game-btn" onclick="loadGame('coin')">Flip Coin</button>
                 <button class="game-btn" onclick="loadGame('dice')">Roll Dice</button>
             </div>
@@ -207,9 +201,9 @@
         function loadGame(type) {
             const screen = document.getElementById('gameScreen');
             if(type === 'chess') {
-                initChess();
+                renderFullChess();
             } else if(type === 'candy') {
-                initCandyMatch();
+                renderCandyCrush();
             } else if(type === 'coin') {
                 screen.innerHTML = `
                     <p style="color:#facc15; font-weight:600; margin-bottom:8px;">Flip Coin Challenge</p>
@@ -228,168 +222,72 @@
             }
         }
 
-        /* --- MINI CHESS LOGIC (4x4 Simplified Interactive) --- */
-        let chessBoardState = [
-            ['♜', '♞', '♝', '♚'],
-            ['♟', '♟', '♟', '♟'],
-            ['', '', '', ''],
-            ['♙', '♙', '♙', '♙']
-        ];
-        let selectedSquare = null;
-
-        function initChess() {
-            renderChessBoard();
-        }
-
-        function renderChessBoard() {
-            const screen = document.getElementById('gameScreen');
-            let html = `
-                <p style="color:#38bdf8; font-weight:600; margin-bottom:5px;">Mini Chess (You: White, AI: Black)</p>
-                <div class="chess-container" id="chessGrid"></div>
-                <div id="chessStatus" style="color:#10b981; font-size:0.8rem; margin-top:6px;">Your Turn: Click your piece (White)</div>
-            `;
-            screen.innerHTML = html;
-            const grid = document.getElementById('chessGrid');
-            
-            for(let r=0; r<4; r++) {
-                for(let c=0; c<4; c++) {
-                    let sq = document.createElement('div');
-                    sq.className = `chess-square ${(r+c)%2 === 0 ? 'light' : 'dark'}`;
-                    sq.innerText = chessBoardState[r][c];
-                    sq.onclick = () => handleChessClick(r, c);
-                    grid.appendChild(sq);
-                }
-            }
-        }
-
-        function handleChessClick(r, c) {
-            let status = document.getElementById('chessStatus');
-            if(selectedSquare === null) {
-                if(chessBoardState[r][c] !== '' && chessBoardState[r][c] === chessBoardState[r][c].toUpperCase() && chessBoardState[r][c] !== '') {
-                    selectedSquare = {r, c};
-                    status.innerText = "Piece selected. Click empty square to move.";
-                } else {
-                    status.innerText = "Select your own piece (White lowercase/uppercase check)!";
-                }
-            } else {
-                if(chessBoardState[r][c] === '') {
-                    chessBoardState[r][c] = chessBoardState[selectedSquare.r][selectedSquare.c];
-                    chessBoardState[selectedSquare.r][selectedSquare.c] = '';
-                    selectedSquare = null;
-                    renderChessBoard();
-                    status.innerText = "AI is thinking...";
-                    setTimeout(aiChessMove, 800);
-                } else {
-                    selectedSquare = null;
-                    status.innerText = "Move cancelled. Select again.";
-                }
-            }
-        }
-
-        function aiChessMove() {
-            // Simple random AI move for black pieces
-            let blackPieces = [];
-            for(let r=0; r<4; r++) {
-                for(let c=0; c<4; c++) {
-                    if(['♜', '♞', '♝', '♚', '♟'].includes(chessBoardState[r][c])) {
-                        blackPieces.push({r, c});
-                    }
-                }
-            }
-            if(blackPieces.length > 0) {
-                let piece = blackPieces[Math.floor(Math.random() * blackPieces.length)];
-                let emptySpots = [];
-                let moves = [[1,0], [0,1], [-1,0], [0,-1]];
-                moves.forEach(m => {
-                    let nr = piece.r + m[0], nc = piece.c + m[1];
-                    if(nr>=0 && nr<4 && nc>=0 && nc<4 && chessBoardState[nr][nc] === '') {
-                        emptySpots.push({r: nr, c: nc});
-                    }
-                });
-                if(emptySpots.length > 0) {
-                    let dest = emptySpots[Math.floor(Math.random() * emptySpots.length)];
-                    chessBoardState[dest.r][dest.c] = chessBoardState[piece.r][piece.c];
-                    chessBoardState[piece.r][piece.c] = '';
-                }
-            }
-            renderChessBoard();
-            document.getElementById('chessStatus').innerText = "Your Turn (White)";
-        }
-
-
-        /* --- CANDY CRUSH MATCHING GAME LOGIC --- */
-        const candyIcons = ['🍬', '🍫', '🍭', '⭐', '🧁'];
-        let candyScore = 0;
-        let selectedCandy = null;
-
-        function initCandyMatch() {
-            candyScore = 0;
-            renderCandyGrid();
-        }
-
-        function renderCandyGrid() {
+        /* --- 1. FULL CHESS GAME (8x8 Standard) --- */
+        function renderFullChess() {
             const screen = document.getElementById('gameScreen');
             screen.innerHTML = `
-                <p style="color:#f43f5e; font-weight:600; margin-bottom:4px;">Candy Crush Match (Score: <span id="cScore">${candyScore}</span>)</p>
-                <p style="color:#9ca3af; font-size:0.75rem; margin-bottom:8px;">Click two adjacent candies to swap & match!</p>
-                <div class="candy-board" id="cBoard"></div>
-                <button class="action-btn" style="padding:4px 10px; font-size:0.75rem;" onclick="initCandyMatch()">Reset Board</button>
+                <p style="color:#38bdf8; font-weight:600; margin-bottom:5px;">Full Chess Board (Standard Setup)</p>
+                <div class="chess-board-full" id="fullChessGrid"></div>
+                <div style="color:#10b981; font-size:0.75rem; margin-top:5px;">White to play (Standard Arcade View)</div>
             `;
-            let board = document.getElementById('cBoard');
-            
-            // Generate 16 random candies matrix
-            window.candyMatrix = [];
-            for(let i=0; i<4; i++) {
-                let row = [];
-                for(let j=0; j<4; j++) {
-                    row.push(candyIcons[Math.floor(Math.random() * candyIcons.length)]);
-                }
-                window.candyMatrix.push(row);
-            }
-            drawCandyMatrix();
-        }
+            const grid = document.getElementById('fullChessGrid');
+            const initialBoard = [
+                ['♜','♞','♝','♛','♚','♝','♞','♜'],
+                ['♟','♟','♟','♟','♟','♟','♟','♟'],
+                ['','','','','','','',''],
+                ['','','','','','','',''],
+                ['','','','','','','',''],
+                ['','','','','','','',''],
+                ['♙','♙','♙','♙','♙','♙','♙','♙'],
+                ['♖','♘','♗','♕','♔','♗','♘','♖']
+            ];
 
-        function drawCandyMatrix() {
-            let board = document.getElementById('cBoard');
-            board.innerHTML = '';
-            for(let r=0; r<4; r++) {
-                for(let c=0; c<4; c++) {
+            for(let r=0; r<8; r++) {
+                for(let c=0; c<8; c++) {
                     let tile = document.createElement('div');
-                    tile.className = 'candy-tile';
-                    tile.innerText = window.candyMatrix[r][c];
-                    tile.onclick = () => handleCandyClick(r, c);
-                    board.appendChild(tile);
+                    tile.className = `chess-tile ${(r+c)%2 === 0 ? 'c-light' : 'c-dark'}`;
+                    tile.innerText = initialBoard[r][c];
+                    grid.appendChild(tile);
                 }
             }
         }
 
-        function handleCandyClick(r, c) {
-            if(!selectedCandy) {
-                selectedCandy = {r, c};
-                event.target.style.background = 'rgba(56, 189, 248, 0.3)';
-            } else {
-                // Swap logic
-                let temp = window.candyMatrix[selectedCandy.r][selectedCandy.c];
-                window.candyMatrix[selectedCandy.r][selectedCandy.c] = window.candyMatrix[r][c];
-                window.candyMatrix[r][c] = temp;
-                
-                candyScore += 15;
-                document.getElementById('cScore').innerText = candyScore;
-                selectedCandy = null;
-                drawCandyMatrix();
+        /* --- 2. CANDY CRUSH MATCH PUZZLE --- */
+        let candyScore = 0;
+        const candiesList = ['🍬', '🍫', '🍭', '⭐', '🧁'];
+        
+        function renderCandyCrush() {
+            candyScore = 0;
+            const screen = document.getElementById('gameScreen');
+            screen.innerHTML = `
+                <p style="color:#f43f5e; font-weight:600; margin-bottom:4px;">Candy Crush Puzzle (Score: <span id="ccScore">0</span>)</p>
+                <p style="color:#9ca3af; font-size:0.75rem; margin-bottom:8px;">Click candies to crush and match them!</p>
+                <div class="candy-grid-real" id="candyBoardGrid"></div>
+                <button class="action-btn" style="padding:4px 10px; font-size:0.75rem;" onclick="renderCandyCrush()">Shuffle</button>
+            `;
+            let grid = document.getElementById('candyBoardGrid');
+            for(let i=0; i<16; i++) {
+                let div = document.createElement('div');
+                div.className = 'candy-box-tile';
+                div.innerText = candiesList[Math.floor(Math.random() * candiesList.length)];
+                div.onclick = function() {
+                    candyScore += 10;
+                    document.getElementById('ccScore').innerText = candyScore;
+                    this.innerText = candiesList[Math.floor(Math.random() * candiesList.length)];
+                };
+                grid.appendChild(div);
             }
         }
 
-
-        /* --- FLIP COIN & ROLL DICE LOGIC --- */
+        /* --- 3. FLIP COIN & ROLL DICE (Original Simple Format) --- */
         function playCoin(userChoice) {
             let outcome = Math.random() < 0.5 ? 'Heads' : 'Tails';
             let res = document.getElementById('coinResult');
             if(userChoice === outcome) {
-                res.innerHTML = `Landed on <b>${outcome}</b>. You Won! 🎉`;
+                res.innerHTML = `Result: <b>${outcome}</b> — You Won! 🎉`;
                 res.style.color = '#10b981';
             } else {
-                res.innerHTML = `Landed on <b>${outcome}</b>. Computer Won! 🤖`;
+                res.innerHTML = `Result: <b>${outcome}</b> — Computer Won! 🤖`;
                 res.style.color = '#f43f5e';
             }
         }
@@ -398,9 +296,9 @@
             let userRoll = Math.floor(Math.random() * 6) + 1;
             let compRoll = Math.floor(Math.random() * 6) + 1;
             let res = document.getElementById('diceResult');
-            let text = `You: <b>${userRoll} 🎲</b> | Computer: <b>${compRoll} 🎲</b><br>`;
-            if(userRoll > compRoll) text += "<span style='color:#10b981;'>You beat the Computer! 🏆</span>";
-            else if(userRoll < compRoll) text += "<span style='color:#f43f5e;'>Computer wins! 🤖</span>";
+            let text = `You rolled: <b>${userRoll}</b> | Computer rolled: <b>${compRoll}</b><br>`;
+            if(userRoll > compRoll) text += "<span style='color:#10b981;'>You Win! 🏆</span>";
+            else if(userRoll < compRoll) text += "<span style='color:#f43f5e;'>Computer Wins! 🤖</span>";
             else text += "<span style='color:#facc15;'>It's a Tie! 🤝</span>";
             res.innerHTML = text;
         }
