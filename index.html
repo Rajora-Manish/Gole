@@ -3,14 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Under Maintenance — Manish</title>
+    <title>Under Maintenance & Arcade — Manish</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Outfit', sans-serif;
             background: #030712;
@@ -19,24 +15,22 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            overflow: hidden;
+            overflow-x: hidden;
             position: relative;
         }
-        /* Background Glowing Orbs for Cool Effect */
         .glow-orb {
             position: absolute;
-            width: 350px;
-            height: 350px;
+            width: 400px;
+            height: 400px;
             background: linear-gradient(135deg, #6366f1, #a855f7);
-            filter: blur(100px);
+            filter: blur(120px);
             border-radius: 50%;
             z-index: -1;
             animation: floatOrb 8s ease-in-out infinite alternate;
         }
         .glow-orb.two {
             background: linear-gradient(135deg, #3b82f6, #06b6d4);
-            bottom: -50px;
-            right: -50px;
+            bottom: -50px; right: -50px;
             animation-delay: -4s;
         }
         @keyframes floatOrb {
@@ -45,96 +39,143 @@
         }
 
         .card {
-            background: rgba(17, 24, 39, 0.7);
+            background: rgba(17, 24, 39, 0.85);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            padding: 50px 40px;
+            padding: 35px 30px;
             border-radius: 24px;
-            max-width: 550px;
-            width: 90%;
+            max-width: 650px;
+            width: 95%;
             text-align: center;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
-            position: relative;
-        }
-
-        .badge {
-            display: inline-block;
-            background: rgba(99, 102, 241, 0.15);
-            color: #818cf8;
-            padding: 6px 16px;
-            border-radius: 50px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            margin-bottom: 20px;
-            border: 1px solid rgba(99, 102, 241, 0.3);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+            margin: 20px 0;
         }
 
         h1 {
-            font-size: 2.4rem;
+            font-size: 2.2rem;
             font-weight: 800;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             background: linear-gradient(to right, #ffffff, #9ca3af);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-
         p {
             color: #9ca3af;
-            font-size: 1.05rem;
-            line-height: 1.6;
-            margin-bottom: 30px;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
         }
 
-        .contact-box {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            padding: 15px;
-            border-radius: 12px;
-            font-size: 0.9rem;
-            color: #d1d5db;
-            margin-bottom: 30px;
+        /* Arcade Section */
+        .arcade-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
         }
+        .arcade-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #38bdf8;
+            margin-bottom: 12px;
+        }
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .game-btn {
+            background: rgba(99, 102, 241, 0.15);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: #c7d2fe;
+            padding: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+        .game-btn:hover {
+            background: rgba(99, 102, 241, 0.35);
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        /* Game Screen Area */
+        .game-screen {
+            background: #0b0f19;
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 1px dashed rgba(255, 255, 255, 0.1);
+        }
+
+        /* Mini Games CSS */
+        .tictactoe-board {
+            display: grid;
+            grid-template-columns: repeat(3, 45px);
+            gap: 5px;
+        }
+        .cell {
+            width: 45px; height: 45px;
+            background: #1f2937;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 1.2rem; font-weight: bold; cursor: pointer; color: #fff;
+            border-radius: 6px;
+        }
+        .clicker-score { font-size: 2rem; font-weight: bold; color: #10b981; margin: 10px 0; }
+        .action-btn {
+            background: #10b981; color: white; border: none; padding: 8px 16px;
+            border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.9rem;
+        }
+        .action-btn:hover { background: #059669; }
 
         .footer {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: #6b7280;
             border-top: 1px solid rgba(255, 255, 255, 0.06);
-            padding-top: 20px;
+            padding-top: 15px;
         }
-
-        /* Pulsing Dot */
-        .pulse-dot {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            background-color: #10b981;
-            border-radius: 50%;
-            margin-right: 6px;
-            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
-            animation: pulse-animation 2s infinite;
-        }
-        @keyframes pulse-animation {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        .query-text {
+            font-size: 0.85rem;
+            color: #9ca3af;
+            margin-bottom: 15px;
         }
     </style>
 </head>
 <body>
 
-    <!-- Background Glow Elements -->
     <div class="glow-orb"></div>
     <div class="glow-orb two"></div>
 
     <div class="card">
-        <div class="badge"><span class="pulse-dot"></span> System Upgrade</div>
         <h1>We're Leveling Up</h1>
-        <p>We are currently tuning up our infrastructure to bring you something exceptionally awesome. Hang tight, we'll be live very soon!</p>
+        <p>Our site is under maintenance. While you wait, pick a mini-game from the arcade below and beat your high score!</p>
         
-        <div class="contact-box">
+        <!-- Arcade Hub -->
+        <div class="arcade-box">
+            <div class="arcade-title">🎮 Maintenance Arcade (Mini Games)</div>
+            <div class="game-grid">
+                <button class="game-btn" onclick="loadGame('clicker')">Cookie Clicker</button>
+                <button class="game-btn" onclick="loadGame('tictactoe')">Tic-Tac-Toe</button>
+                <button class="game-btn" onclick="loadGame('rps')">Rock Paper Scissors</button>
+                <button class="game-btn" onclick="loadGame('guess')">Guess Number</button>
+                <button class="game-btn" onclick="loadGame('coin')">Flip Coin</button>
+                <button class="game-btn" onclick="loadGame('dice')">Roll Dice</button>
+            </div>
+
+            <!-- Game Display Area -->
+            <div class="game-screen" id="gameScreen">
+                <p style="color: #6b7280; margin:0;">Select any game above to start playing!</p>
+            </div>
+        </div>
+
+        <div class="query-text">
             For any queries regarding this website, please feel free to contact us.
         </div>
         
@@ -143,5 +184,116 @@
         </div>
     </div>
 
+    <script>
+        function loadGame(type) {
+            const screen = document.getElementById('gameScreen');
+            if(type === 'clicker') {
+                screen.innerHTML = `
+                    <p style="color:#cbd5e1; margin-bottom:5px;">Click the button as fast as you can!</p>
+                    <div class="clicker-score" id="clickScore">0</div>
+                    <button class="action-btn" onclick="incrementClick()">Click Me! 🚀</button>
+                `;
+            } else if(type === 'tictactoe') {
+                screen.innerHTML = `
+                    <p style="color:#cbd5e1; margin-bottom:8px;">Tic-Tac-Toe (Play vs Yourself)</p>
+                    <div class="tictactoe-board" id="tttBoard">
+                        <div class="cell" onclick="cellClick(0)"></div>
+                        <div class="cell" onclick="cellClick(1)"></div>
+                        <div class="cell" onclick="cellClick(2)"></div>
+                        <div class="cell" onclick="cellClick(3)"></div>
+                        <div class="cell" onclick="cellClick(4)"></div>
+                        <div class="cell" onclick="cellClick(5)"></div>
+                        <div class="cell" onclick="cellClick(6)"></div>
+                        <div class="cell" onclick="cellClick(7)"></div>
+                        <div class="cell" onclick="cellClick(8)"></div>
+                    </div>
+                    <button class="action-btn" style="margin-top:10px; font-size:0.75rem; padding:4px 8px;" onclick="loadGame('tictactoe')">Reset</button>
+                `;
+            } else if(type === 'rps') {
+                screen.innerHTML = `
+                    <p style="color:#cbd5e1; margin-bottom:10px;">Rock, Paper, Scissors</p>
+                    <div style="display:flex; gap:8px; margin-bottom:10px;">
+                        <button class="action-btn" onclick="playRPS('Rock')">✊ Rock</button>
+                        <button class="action-btn" onclick="playRPS('Paper')">✋ Paper</button>
+                        <button class="action-btn" onclick="playRPS('Scissors')">✌ Scissors</button>
+                    </div>
+                    <div id="rpsResult" style="color:#38bdf8; font-size:0.9rem;"></div>
+                `;
+            } else if(type === 'guess') {
+                screen.innerHTML = `
+                    <p style="color:#cbd5e1; margin-bottom:8px;">Guess Number (1 to 10)</p>
+                    <input type="number" id="guessInput" min="1" max="10" style="padding:6px; width:80px; text-align:center; border-radius:6px; border:none; margin-bottom:8px;">
+                    <br><button class="action-btn" onclick="checkGuess()">Guess</button>
+                    <div id="guessResult" style="color:#38bdf8; font-size:0.85rem; margin-top:8px;"></div>
+                `;
+            } else if(type === 'coin') {
+                screen.innerHTML = `
+                    <p style="color:#cbd5e1; margin-bottom:10px;">Virtual Coin Toss</p>
+                    <button class="action-btn" onclick="flipCoin()">Flip Coin</button>
+                    <div id="coinResult" style="font-size:1.2rem; font-weight:bold; color:#facc15; margin-top:10px;"></div>
+                `;
+            } else if(type === 'dice') {
+                screen.innerHTML = `
+                    <p style="color:#cbd5e1; margin-bottom:10px;">Roll a 6-Sided Dice</p>
+                    <button class="action-btn" onclick="rollDice()">Roll Dice 🎲</button>
+                    <div id="diceResult" style="font-size:1.5rem; font-weight:bold; color:#f43f5e; margin-top:10px;">🎲</div>
+                `;
+            }
+        }
+
+        // Clicker Game Logic
+        let count = 0;
+        function incrementClick() {
+            count++;
+            document.getElementById('clickScore').innerText = count;
+        }
+
+        // Tic Tac Toe Logic
+        let tttTurn = 'X';
+        let tttBoardState = ['', '', '', '', '', '', '', '', ''];
+        function cellClick(index) {
+            if(tttBoardState[index] === '') {
+                tttBoardState[index] = tttTurn;
+                document.getElementsByClassName('cell')[index].innerText = tttTurn;
+                tttTurn = tttTurn === 'X' ? 'O' : 'X';
+            }
+        }
+
+        // RPS Logic
+        function playRPS(userChoice) {
+            const choices = ['Rock', 'Paper', 'Scissors'];
+            const computerChoice = choices[Math.floor(Math.random() * choices.length)];
+            let result = '';
+            if(userChoice === computerChoice) result = `Draw! Both chose ${userChoice}`;
+            else if((userChoice==='Rock'&&computerChoice==='Scissors') || (userChoice==='Paper'&&computerChoice==='Rock') || (userChoice==='Scissors'&&computerChoice==='Paper')) {
+                result = `You Win! 🎉 Computer chose ${computerChoice}`;
+            } else {
+                result = `You Lose! 😢 Computer chose ${computerChoice}`;
+            }
+            document.getElementById('rpsResult').innerText = result;
+        }
+
+        // Guess Game Logic
+        let targetNum = Math.floor(Math.random() * 10) + 1;
+        function checkGuess() {
+            let userVal = parseInt(document.getElementById('guessInput').value);
+            let res = document.getElementById('guessResult');
+            if(userVal === targetNum) res.innerHTML = "Correct! You guessed it! 🎯";
+            else if(userVal > targetNum) res.innerHTML = "Too high! Try lower.";
+            else res.innerHTML = "Too low! Try higher.";
+        }
+
+        // Coin Flip
+        function flipCoin() {
+            let res = Math.random() < 0.5 ? 'Heads 🪙' : 'Tails 🪙';
+            document.getElementById('coinResult').innerText = res;
+        }
+
+        // Roll Dice
+        function rollDice() {
+            let roll = Math.floor(Math.random() * 6) + 1;
+            document.getElementById('diceResult').innerText = `Result: ${roll} 🎲`;
+        }
+    </script>
 </body>
 </html>
