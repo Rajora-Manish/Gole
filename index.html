@@ -3,62 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Site Under Maintenance</title>
+    <title>Under Maintenance - Manish</title>
     <style>
         body {
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1f4068, #162447);
+            background: linear-gradient(135deg, #0f172a, #1e293b);
             color: #ffffff;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             text-align: center;
         }
         .container {
             max-width: 600px;
+            width: 90%;
             padding: 40px;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            border: 1px solid rgba(255, 255, 255, 0.18);
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
         h1 {
-            font-size: 2.5rem;
+            font-size: 2.3rem;
+            margin-bottom: 10px;
+            color: #f43f5e;
+        }
+        .quote {
+            font-style: italic;
+            color: #38bdf8;
+            font-size: 1rem;
             margin-bottom: 20px;
-            color: #e43f5a;
         }
         p {
-            font-size: 1.1rem;
-            color: #cbd5e1;
+            font-size: 1rem;
+            color: #94a3b8;
             line-height: 1.6;
             margin-bottom: 25px;
         }
-        .spinner {
-            margin: 0 auto 20px auto;
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(255, 255, 255, 0.3);
-            border-top: 5px solid #e43f5a;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .contact-text {
-            font-size: 0.95rem;
-            color: #94a3b8;
+        /* Progress Bar Styles */
+        .progress-container {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            height: 12px;
             margin-bottom: 15px;
+        }
+        .progress-bar {
+            width: 75%; /* Aap ise apne hisaab se kam ya zyada kar sakte hain */
+            height: 100%;
+            background: linear-gradient(90deg, #38bdf8, #f43f5e);
+            border-radius: 10px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 0.8; }
+            50% { opacity: 1; }
+            100% { opacity: 0.8; }
+        }
+        .progress-text {
+            font-size: 0.85rem;
+            color: #cbd5e1;
+            margin-bottom: 25px;
         }
         .footer {
             font-size: 0.85rem;
             color: #64748b;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
             padding-top: 15px;
         }
     </style>
@@ -66,13 +82,17 @@
 <body>
 
     <div class="container">
-        <div class="spinner"></div>
         <h1>We'll Be Back Soon!</h1>
-        <p>Sorry for the inconvenience, but we are performing some maintenance at the moment. We will be back online shortly!</p>
+        <div class="quote">"Our developers are fueling up on coffee to fix things faster." ☕</div>
+        <p>We are currently upgrading our website to bring you a brand new experience. Stay tuned!</p>
         
-        <div class="contact-text">
-            For any queries regarding this website, please feel free to contact us.
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-bar"></div>
         </div>
+        <div class="progress-text">Upgrade in progress... <b>75% Completed</b></div>
+
+        <p style="font-size: 0.9rem; margin-bottom: 15px;">For any queries regarding this website, please feel free to contact us.</p>
         
         <div class="footer">
             Copyright &copy; 2026 Manish. All rights reserved.
