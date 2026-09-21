@@ -65,7 +65,7 @@
             font-size: 13px;
         }
 
-        /* Chess Board Styles (Aapka original code) */
+        /* Chess Board Styles */
         #game{
             text-align: center;
             display: flex;
@@ -135,7 +135,7 @@
             <div style="font-weight: bold; margin-bottom: 8px; color: #facc15; font-size: 13px;">Select Game:</div>
             <div class="games-buttons">
                 <button class="main-btn" onclick="openChessGame()">Chess (AI vs Human)</button>
-                <button class="main-btn" onclick="openCoinGame()">Flip Coin (Human)</button>
+                <button class="main-btn" onclick="openCoinGame()">Flip Coin</button>
             </div>
             
             <div class="display-box" id="gameArea">
@@ -377,32 +377,23 @@
         }
 
 
-        // --- 2. FLIP COIN (Human Only) ---
+        // --- 2. FLIP COIN (Normal Random Flip) ---
         function openCoinGame() {
             let area = document.getElementById('gameArea');
             area.innerHTML = `
-                <div style="color: #facc15; font-weight: bold; margin-bottom: 8px;">Flip Coin (Chuniye kya aayega):</div>
-                <div>
-                    <button onclick="flipCoin('Heads')" style="padding: 6px 14px; cursor: pointer; font-weight:bold;">Heads 🪙</button>
-                    <button onclick="flipCoin('Tails')" style="padding: 6px 14px; cursor: pointer; font-weight:bold; margin-left: 8px;">Tails 🪙</button>
-                </div>
-                <div id="coinResult" style="margin-top: 10px; font-weight: bold; min-height: 24px; font-size: 13px;"></div>
+                <div style="color: #facc15; font-weight: bold; margin-bottom: 10px;">Flip Coin</div>
+                <button class="main-btn" onclick="executeFlip()" style="padding: 8px 20px;">Flip Coin 🪙</button>
+                <div id="coinResult" style="margin-top: 12px; font-weight: bold; font-size: 15px; min-height: 24px;"></div>
             `;
         }
 
-        function flipCoin(choice) {
-            let outcome = Math.random() < 0.5 ? 'Heads' : 'Tails';
+        function executeFlip() {
+            let outcome = Math.random() < 0.5 ? 'Heads 🪙' : 'Tails 🪙';
             let res = document.getElementById('coinResult');
-            if(choice === outcome) {
-                res.innerHTML = `Sahi guess! Coin par <b>${outcome}</b> aaya. 🎉`;
-                res.style.color = '#10b981';
-            } else {
-                res.innerHTML = `Galat guess! Coin par <b>${outcome}</b> aaya. ❌`;
-                res.style.color = '#f43f5e';
-            }
+            res.innerHTML = `Result: <span style="color: #38bdf8;">${outcome}</span>`;
         }
 
-        // Default load chess on startup if desired, or let user pick
+        // Default open chess on startup
         window.onload = function() {
             openChessGame();
         };
