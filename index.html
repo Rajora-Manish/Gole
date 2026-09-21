@@ -36,11 +36,24 @@
             border: 1px solid #334155;
         }
         
+        /* Chess Clickable Text Link Style */
+        .chess-trigger {
+            color: #38bdf8;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: underline;
+            transition: color 0.2s;
+        }
+        .chess-trigger:hover {
+            color: #60a5fa;
+        }
+        
         .display-box {
             background: #1e293b;
             padding: 10px;
             border-radius: 6px;
-            min-height: 120px;
+            min-height: 100px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -111,14 +124,13 @@
 
     <div class="container">
         <h1>We'll Be Back Soon!</h1>
-        <p>Our website is currently under maintenance. Enjoy playing Chess while you wait!</p>
+        <p>Our website is currently under maintenance. Thank you for your patience.</p>
 
         <!-- Games Area -->
         <div class="games-section">
-            <div style="font-weight: bold; margin-bottom: 10px; color: #facc15; font-size: 13px;">Chess (AI vs Human)</div>
-            
             <div class="display-box" id="gameArea">
-                <!-- Chess will load automatically here -->
+                <!-- Sirf Chess text dikhega, click karne par game open hoga -->
+                <span class="chess-trigger" onclick="openChessGame()">Play Chess ♟️</span>
             </div>
         </div>
 
@@ -354,11 +366,6 @@
                 draw();
             }
         }
-
-        // Auto start chess when page loads
-        window.onload = function() {
-            openChessGame();
-        };
     </script>
 
 </body>
