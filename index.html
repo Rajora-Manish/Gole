@@ -35,23 +35,6 @@
             margin-bottom: 15px;
             border: 1px solid #334155;
         }
-        .games-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 12px;
-        }
-        .main-btn {
-            background: #3b82f6;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 12px;
-        }
-        .main-btn:hover { background: #2563eb; }
         
         .display-box {
             background: #1e293b;
@@ -115,30 +98,6 @@
         }
         .chess-new-btn:hover { background: #059669; }
 
-        /* Car Racing Game Styles */
-        .track {
-            width: 260px;
-            height: 300px;
-            background: #334155;
-            position: relative;
-            overflow: hidden;
-            border: 3px dashed #94a3b8;
-            margin: 0 auto;
-            border-radius: 6px;
-        }
-        .car {
-            position: absolute;
-            bottom: 10px;
-            left: 110px;
-            font-size: 28px;
-            transition: left 0.1s ease;
-        }
-        .obstacle {
-            position: absolute;
-            top: -40px;
-            font-size: 24px;
-        }
-
         .footer {
             font-size: 11px;
             color: #64748b;
@@ -152,18 +111,14 @@
 
     <div class="container">
         <h1>We'll Be Back Soon!</h1>
-        <p>Our website is currently under maintenance. Enjoy playing games while you wait!</p>
+        <p>Our website is currently under maintenance. Enjoy playing Chess while you wait!</p>
 
         <!-- Games Area -->
         <div class="games-section">
-            <div style="font-weight: bold; margin-bottom: 8px; color: #facc15; font-size: 13px;">Select Game:</div>
-            <div class="games-buttons">
-                <button class="main-btn" onclick="openChessGame()">Chess (AI vs Human)</button>
-                <button class="main-btn" onclick="openCarGame()">Car Racing</button>
-            </div>
+            <div style="font-weight: bold; margin-bottom: 10px; color: #facc15; font-size: 13px;">Chess (AI vs Human)</div>
             
             <div class="display-box" id="gameArea">
-                Upar kisi ek game par click karein!
+                <!-- Chess will load automatically here -->
             </div>
         </div>
 
@@ -175,7 +130,7 @@
     </div>
 
     <script>
-        // --- 1. CHESS GAME INTEGRATION ---
+        // --- CHESS GAME INTEGRATION ---
         const pieces = {
             "r":"♜","n":"♞","b":"♝","q":"♛","k":"♚","p":"♟",
             "R":"♖","N":"♘","B":"♗","Q":"♕","K":"♔","P":"♙"
@@ -189,7 +144,6 @@
         let boardElement, statusElement;
 
         function openChessGame() {
-            stopCarGame(); // Purana car loop rokein agar chal raha ho
             let area = document.getElementById('gameArea');
             area.innerHTML = `
                 <div id="game">
@@ -340,7 +294,7 @@
             if(type === "k"){
                 for(let dr=-1; dr<=1; dr++){
                     for(let dc=-1; dc<=1; dc++){
-                        if(dr !== 0 || dr !== 0) add(r + dr, c + dr); // fixed typo check below
+                        if(dr !== 0 || dc !== 0) add(r + dr, c + dc);
                     }
                 }
             }
@@ -401,90 +355,7 @@
             }
         }
 
-
-        // --- 2. CAR RACING GAME INTEGRATION ---
-        let carInterval = null;
-        let carPos = 110;
-        let obsPos = -40;
-        let obsLeft = 110;
-        let carScore = 0;
-        let carRunning = false;
-
-        function openCarGame() {
-            let area = document.getElementById('gameArea');
-            area.innerHTML = `
-                <div style="color: #facc15; font-weight: bold; margin-bottom: 5px;">Car Racing (Score: <span id="scoreVal">0</span>)</div>
-                <div class="track" id="raceTrack">
-                    <div class="car" id="playerCar" style="left: 110px;">🏎️</div>
-                    <div class="obstacle" id="obsCar" style="left: 110px; top: -40px;">🚗</div>
-                </div>
-                <div style="margin-top: 8px; display:flex; gap:10px;">
-                    <button class="main-btn" onclick="moveCar('left')">◀ Left</button>
-                    <button class="main-btn" onclick="moveCar('right')">Right ▶</button>
-                </div>
-            `;
-            startCarGame();
-        }
-
-        function startCarGame() {
-            stopCarGame();
-            carScore = 0;
-            carPos = 110;
-            obsPos = -40;
-            obsLeft = Math.random() < 0.5 ? 40 : 160;
-            carRunning = true;
-
-            // Keyboard controls
-            window.onkeydown = function(e) {
-                if(e.key === "ArrowLeft") moveCar('left');
-                if(e.key === "ArrowRight") moveCar('right');
-            };
-
-            carInterval = setInterval(() => {
-                if(!carRunning) return;
-                obsPos += 5;
-                if(obsPos > 300) {
-                    obsPos = -40;
-                    obsLeft = [30, 110, 180][Math.floor(Math.random()*3)];
-                    carScore += 10;
-                    if(document.getElementById('scoreVal')) {
-                        document.getElementById('scoreVal').innerText = carScore;
-                    }
-                }
-
-                let obs = document.getElementById('obsCar');
-                if(obs) {
-                    obs.style.top = obsPos + 'px';
-                    obs.style.left = obsLeft + 'px';
-                }
-
-                // Simple collision detection
-                if(obsPos > 220 && obsPos < 270 && Math.abs(carPos - obsLeft) < 30) {
-                    carRunning = false;
-                    clearInterval(carInterval);
-                    alert("Game Over! Score: " + carScore);
-                    startCarGame();
-                }
-            }, 30);
-        }
-
-        function moveCar(dir) {
-            if(!carRunning) return;
-            if(dir === 'left' && carPos > 30) {
-                carPos -= 70;
-            } else if(dir === 'right' && carPos < 180) {
-                carPos += 70;
-            }
-            let c = document.getElementById('playerCar');
-            if(c) c.style.left = carPos + 'px';
-        }
-
-        function stopCarGame() {
-            if(carInterval) clearInterval(carInterval);
-            window.onkeydown = null;
-        }
-
-        // Default open chess on startup
+        // Auto start chess when page loads
         window.onload = function() {
             openChessGame();
         };
