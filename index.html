@@ -3,169 +3,516 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Under Maintenance & Games — Manish</title>
+    <title>Under Maintenance & Arcade Hub — Manish</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { 400: '#38bdf8', 500: '#0284c7', 600: '#0369a1' }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         body {
             margin: 0;
             padding: 0;
-            font-family: Arial, sans-serif;
-            background: #0f172a;
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at top, #1e1b4b 0%, #0f172a 60%, #020617 100%);
             color: #ffffff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             min-height: 100vh;
-        }
-        .container {
-            width: 95%;
-            max-width: 600px;
-            background: #1e293b;
-            padding: 25px;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-        }
-        h1 { color: #38bdf8; margin-bottom: 8px; font-size: 22px; }
-        p { color: #94a3b8; font-size: 13px; line-height: 1.4; margin-bottom: 15px; }
-        
-        .games-section {
-            background: #0f172a;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            border: 1px solid #334155;
-        }
-        
-        /* Chess Clickable Text Link Style */
-        .chess-trigger {
-            color: #38bdf8;
-            font-size: 15px;
-            font-weight: bold;
-            cursor: pointer;
-            text-decoration: underline;
-            transition: color 0.2s;
-        }
-        .chess-trigger:hover {
-            color: #60a5fa;
-        }
-        
-        .display-box {
-            background: #1e293b;
-            padding: 10px;
-            border-radius: 6px;
-            min-height: 100px;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            font-size: 13px;
+            overflow-x: hidden;
         }
 
-        /* Chess Board Styles */
-        #game{
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        #status{
-            height: 25px;
-            font-size: 14px;
-            margin-bottom: 5px;
-            color: #facc15;
-            font-weight: bold;
-        }
-        #board{
-            width: 340px;
-            height: 340px;
-            display: grid;
-            grid-template-columns: repeat(8, 1fr);
-            border: 3px solid #333;
-            margin: 0 auto;
-        }
-        .square{
-            width: 42.5px;
-            height: 42.5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 30px;
-            cursor: pointer;
-            box-sizing: border-box;
-        }
-        .white{ background: #f0d9b5; color: #000; }
-        .black{ background: #b58863; color: #000; }
-        .selected{ background: #f7ec55 !important; }
-        .possible{ box-shadow: inset 0 0 0 4px #35c759; }
+        .arcade-font { font-family: 'Fredoka One', cursive, sans-serif; }
 
-        .chess-new-btn {
-            margin-top: 8px;
-            padding: 6px 18px;
-            cursor: pointer;
-            background: #10b981;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-weight: bold;
-            font-size: 11px;
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
-        .chess-new-btn:hover { background: #059669; }
 
-        .footer {
-            font-size: 11px;
-            color: #64748b;
-            border-top: 1px solid #334155;
-            padding-top: 12px;
-            margin-top: 10px;
+        .game-badge {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
+        .game-badge:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 10px 25px -5px rgba(56, 189, 248, 0.25);
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.3)); }
+            50% { filter: drop-shadow(0 0 25px rgba(56, 189, 248, 0.6)); }
+        }
+        .header-glow { animation: pulseGlow 3s infinite ease-in-out; }
+
+        /* Coin 3D */
+        .perspective-container { perspective: 1200px; }
+        .coin {
+            width: 150px; height: 150px; position: relative;
+            transform-style: preserve-3d; transition: transform 0.1s ease-out; cursor: pointer;
+        }
+        .coin-face {
+            position: absolute; width: 100%; height: 100%; border-radius: 50%;
+            backface-visibility: hidden; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.35), 0 10px 25px rgba(0,0,0,0.4);
+            border: 5px solid #eab308;
+        }
+        .coin-heads {
+            background: linear-gradient(135deg, #fef08a 0%, #eab308 50%, #ca8a04 100%);
+            color: #713f12;
+        }
+        .coin-tails {
+            background: linear-gradient(135deg, #fef08a 0%, #ca8a04 50%, #854d0e 100%);
+            color: #451a03; transform: rotateY(180deg);
+        }
+
+        /* Dice 3D */
+        @keyframes rollDice3D {
+            0% { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1); }
+            50% { transform: rotateX(720deg) rotateY(540deg) rotateZ(180deg) scale(0.95); }
+            100% { transform: rotateX(1440deg) rotateY(1080deg) rotateZ(360deg) scale(1); }
+        }
+        .rolling { animation: rollDice3D 0.8s cubic-bezier(0.15, 0.9, 0.3, 1.1) forwards; }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.3); border-radius: 4px; }
     </style>
 </head>
-<body>
+<body class="p-3 sm:p-6">
 
-    <div class="container">
-        <h1>We'll Be Back Soon!</h1>
-        <p>Our website is currently under maintenance. Thank you for your patience.</p>
+    <div class="w-full max-w-3xl glass-card rounded-3xl p-5 sm:p-8 shadow-2xl relative border border-slate-700/60 overflow-hidden">
+        <!-- Ambient decorative blurs -->
+        <div class="absolute -top-20 -left-20 w-48 h-48 bg-sky-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-20 -right-20 w-48 h-48 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
-        <!-- Games Area -->
-        <div class="games-section">
-            <div class="display-box" id="gameArea">
-                <!-- Sirf Chess text dikhega, click karne par game open hoga -->
-                <span class="chess-trigger" onclick="openChessGame()">Play Chess ♟️</span>
+        <!-- Top Status Pill -->
+        <div class="flex items-center justify-center gap-2 mb-4">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-950/70 border border-emerald-500/40 text-emerald-400">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                System Upgrade In Progress
+            </span>
+        </div>
+
+        <!-- Centered Header & Description -->
+        <div class="text-center w-full mb-6">
+            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight header-glow text-sky-400 mb-2 text-center">
+                We'll Be Back Soon!
+            </h1>
+            <p class="text-xs sm:text-sm text-slate-400 max-w-lg mx-auto leading-relaxed text-center">
+                Our website is currently undergoing scheduled maintenance. Enjoy playing our arcade games while you wait!
+            </p>
+        </div>
+
+        <!-- Game Console Hub -->
+        <div class="bg-slate-950/80 rounded-2xl p-4 sm:p-5 border border-slate-800/80 shadow-inner mb-5">
+            <div id="gameArea">
+                <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-2">
+                    <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400">
+                        <i class="fa-solid fa-gamepad text-sky-400 text-sm"></i>
+                        <span>Select Game to Play</span>
+                    </div>
+                    <span class="text-[11px] text-slate-500">8 Mini Games Ready</span>
+                </div>
+
+                <!-- Games Grid -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                    <button onclick="openFlappyGame()" class="game-badge flex flex-col items-center justify-center p-3 rounded-xl bg-slate-900 border border-slate-800 hover:border-sky-500 group">
+                        <span class="text-2xl mb-1 group-hover:scale-110 transition-transform">🐤</span>
+                        <span class="text-xs font-bold text-slate-200">Flappy Bird</span>
+                        <span class="text-[10px] text-sky-400/80">Tap & Fly</span>
+                    </button>
+
+                    <button onclick="openTicTacToeGame()" class="game-badge flex flex-col items-center justify-center p-3 rounded-xl bg-slate-900 border border-slate-800 hover:border-cyan-500 group">
+                        <span class="text-2xl mb-1 group-hover:scale-110 transition-transform">⭕❌</span>
+                        <span class="text-xs font-bold text-slate-200">Tic-Tac-Toe</span>
+                        <span class="text-[10px] text-cyan-400/80">vs Unbeatable AI</span>
+                    </button>
+
+                    <button onclick="openChessGame()" class="game-badge flex flex-col items-center justify-center p-3 rounded-xl bg-slate-900 border border-slate-800 hover:border-emerald-500 group">
+                        <span class="text-2xl mb-1 group-hover:scale-110 transition-transform">♟️</span>
+                        <span class="text-xs font-bold text-slate-200">Chess</span>
+                        <span class="text-[10px] text-emerald-400/80">2 Players & vs AI</span>
+                    </button>
+
+                    <button onclick="openEmojiSnakeGame()" class="game-badge flex flex-col items-center justify-center p-3 rounded-xl bg-slate-900 border border-slate-800 hover:border-pink-500 group">
+                        <span class="text-2xl mb-1 group-hover:scale-110 transition-transform">🐍</span>
+                        <span class="text-xs font-bold text-slate-200">Battle Snake</span>
+                        <span class="text-[10px] text-pink-400/80">Slither Survival</span>
+                    </button>
+
+                    <button onclick="openClassicSnakeGame()" class="game-badge flex flex-col items-center justify-center p-3 rounded-xl bg-slate-900 border border-slate-800 hover:border-amber-400 group">
+                        <span class="text-2xl mb-1 group-hover:scale-110 transition-transform">🍏</span>
+                        <span class="text-xs font-bold text-slate-200">Classic Snake</span>
+                        <span class="text-[10px] text-amber-400/80">Retro Grid</span>
+                    </button>
+
+                    <button onclick="openCoinFlipGame()" class="game-badge flex flex-col items-center justify-center p-3 rounded-xl bg-slate-900 border border-slate-800 hover:border-yellow-500 group">
+                        <span class="text-2xl mb-1 group-hover:scale-110 transition-transform">🪙</span>
+                        <span class="text-xs font-bold text-slate-200">3D Coin Flip</span>
+                        <span class="text-[10px] text-yellow-400/80">Heads or Tails</span>
+                    </button>
+
+                    <button onclick="openDiceRollerGame()" class="game-badge flex flex-col items-center justify-center p-3 rounded-xl bg-slate-900 border border-slate-800 hover:border-purple-500 group">
+                        <span class="text-2xl mb-1 group-hover:scale-110 transition-transform">🎲</span>
+                        <span class="text-xs font-bold text-slate-200">Dice Roller</span>
+                        <span class="text-[10px] text-purple-400/80">Interactive 3D</span>
+                    </button>
+
+                    <button onclick="openMemoryGame()" class="game-badge flex flex-col items-center justify-center p-3 rounded-xl bg-slate-900 border border-slate-800 hover:border-emerald-400 group">
+                        <span class="text-2xl mb-1 group-hover:scale-110 transition-transform">🧠</span>
+                        <span class="text-xs font-bold text-slate-200">Memory Match</span>
+                        <span class="text-[10px] text-emerald-400/80">Pairs Puzzle</span>
+                    </button>
+                </div>
             </div>
         </div>
 
-        <p style="font-size: 12px; margin-bottom: 5px;">For any queries regarding this website, please feel free to contact us.</p>
-        
-        <div class="footer">
+        <!-- Contact Section -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-900/60 p-3 px-4 rounded-xl border border-slate-800 text-xs">
+            <span class="text-slate-400 text-center sm:text-left">For any queries regarding this website, please feel free to contact us:</span>
+            <a href="https://instagram.com/m.ravan_02" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-pink-500 via-purple-600 to-indigo-600 text-white font-bold shadow hover:shadow-pink-500/20 hover:scale-105 active:scale-95 transition-all">
+                <i class="fa-brands fa-instagram text-sm"></i>
+                <span>@m.ravan_02</span>
+            </a>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer text-center">
             Copyright &copy; 2026 Manish. All rights reserved.
         </div>
     </div>
 
     <script>
-        // --- CHESS GAME INTEGRATION ---
-        const pieces = {
-            "r":"♜","n":"♞","b":"♝","q":"♛","k":"♚","p":"♟",
-            "R":"♖","N":"♘","B":"♗","Q":"♕","K":"♔","P":"♙"
-        };
+        function getBackBtnHTML() {
+            return `<button onclick="location.reload()" style="margin-top: 14px; padding: 7px 16px; background: #334155; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: bold; transition: background 0.2s;" onmouseover="this.style.background='#475569'" onmouseout="this.style.background='#334155'">← Back to Arcade Hub</button>`;
+        }
 
-        let board;
-        let selected = null;
-        let possible = [];
-        let playerTurn = true;
-        let gameOver = false;
+        // --- 1. FLAPPY BIRD ---
+        function openFlappyGame() {
+            let area = document.getElementById('gameArea');
+            area.innerHTML = `
+                <div style="text-align:center; display:flex; flex-direction:column; align-items:center;">
+                    <div style="font-size: 13px; margin-bottom: 4px; font-weight: bold; color: #38bdf8;">
+                        Score: <span id="flappyScore">0</span> | Best: <span id="flappyBest" style="color:#facc15;">0</span>
+                    </div>
+                    <canvas id="flappyCanvas" width="300" height="320" style="border: 2px solid #38bdf8; background: #0c1527; border-radius:10px; cursor:pointer; box-shadow: 0 0 20px rgba(56,189,248,0.2);"></canvas>
+                    <div style="margin-top: 6px; font-size: 11px; color: #94a3b8;">Click Canvas or Press [Space] to Jump</div>
+                    ${getBackBtnHTML()}
+                </div>
+            `;
+            initFlappyEngine();
+        }
+
+        function initFlappyEngine() {
+            const canvas = document.getElementById('flappyCanvas');
+            if(!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let birdY = 150, birdVelocity = 0, gravity = 0.38, jumpPower = -6;
+            let pipes = [], frameCount = 0, flappyScore = 0, gameOver = false, gameStarted = false;
+            let bestScore = parseInt(localStorage.getItem('flappy_best') || '0');
+            document.getElementById('flappyBest').innerText = bestScore;
+
+            let audioCtx = null;
+            function playBeep(freq, type, dur) {
+                try {
+                    if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    if(audioCtx.state === 'suspended') audioCtx.resume();
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = type;
+                    osc.frequency.value = freq;
+                    gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + dur);
+                } catch(e) {}
+            }
+
+            function flap() {
+                if(gameOver) { resetFlappy(); return; }
+                gameStarted = true;
+                birdVelocity = jumpPower;
+                playBeep(450, 'sine', 0.1);
+            }
+
+            canvas.addEventListener('click', flap);
+            const keyListener = (e) => {
+                if(e.code === 'Space') { e.preventDefault(); flap(); }
+            };
+            window.addEventListener('keydown', keyListener);
+
+            function resetFlappy() {
+                birdY = 150; birdVelocity = 0; pipes = []; flappyScore = 0; frameCount = 0;
+                gameOver = false; gameStarted = false;
+                document.getElementById('flappyScore').innerText = '0';
+            }
+
+            let animId;
+            function loop() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = "#1e293b";
+                ctx.fillRect(0, canvas.height - 15, canvas.width, 15);
+
+                if(gameStarted && !gameOver) {
+                    birdVelocity += gravity;
+                    birdY += birdVelocity;
+                    frameCount++;
+
+                    if(frameCount % 85 === 0) {
+                        let pipeH = Math.floor(Math.random() * (canvas.height - 160)) + 30;
+                        pipes.push({ x: canvas.width, top: pipeH, passed: false });
+                    }
+
+                    for(let i = 0; i < pipes.length; i++) {
+                        pipes[i].x -= 2;
+                        let pipeWidth = 38, gap = 95;
+                        ctx.fillStyle = "#10b981";
+                        ctx.fillRect(pipes[i].x, 0, pipeWidth, pipes[i].top);
+                        ctx.fillRect(pipes[i].x, pipes[i].top + gap, pipeWidth, canvas.height - (pipes[i].top + gap));
+
+                        let birdBox = { x: 50, y: birdY, size: 14 };
+                        if (
+                            birdBox.x + birdBox.size > pipes[i].x &&
+                            birdBox.x - birdBox.size < pipes[i].x + pipeWidth &&
+                            (birdBox.y - birdBox.size < pipes[i].top || birdBox.y + birdBox.size > pipes[i].top + gap)
+                        ) {
+                            if(!gameOver) { gameOver = true; playBeep(200, 'sawtooth', 0.3); }
+                        }
+
+                        if(pipes[i].x + pipeWidth < birdBox.x && !pipes[i].passed) {
+                            flappyScore++;
+                            pipes[i].passed = true;
+                            document.getElementById('flappyScore').innerText = flappyScore;
+                            playBeep(620, 'sine', 0.12);
+                            if(flappyScore > bestScore) {
+                                bestScore = flappyScore;
+                                localStorage.setItem('flappy_best', bestScore);
+                                document.getElementById('flappyBest').innerText = bestScore;
+                            }
+                        }
+                    }
+
+                    pipes = pipes.filter(p => p.x > -50);
+                    if(birdY + 14 >= canvas.height - 15 || birdY - 14 <= 0) {
+                        if(!gameOver) { gameOver = true; playBeep(200, 'sawtooth', 0.3); }
+                    }
+                }
+
+                ctx.font = "24px sans-serif";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText("🐤", 50, birdY);
+
+                if(!gameStarted) {
+                    ctx.fillStyle = "#38bdf8";
+                    ctx.font = "13px 'Inter', sans-serif";
+                    ctx.fillText("Tap or Press [Space] to Fly", canvas.width / 2, 80);
+                }
+
+                if(gameOver) {
+                    ctx.fillStyle = "rgba(15, 23, 42, 0.85)";
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.fillStyle = "#ef4444";
+                    ctx.font = "bold 18px 'Inter', sans-serif";
+                    ctx.fillText("Game Over!", canvas.width / 2, canvas.height / 2 - 15);
+                    ctx.fillStyle = "#cbd5e1";
+                    ctx.font = "12px 'Inter', sans-serif";
+                    ctx.fillText("Tap to Try Again 🔄", canvas.width / 2, canvas.height / 2 + 15);
+                }
+
+                animId = requestAnimationFrame(loop);
+            }
+
+            animId = requestAnimationFrame(loop);
+            document.querySelector("button[onclick='location.reload()']").addEventListener("click", () => {
+                cancelAnimationFrame(animId);
+                window.removeEventListener('keydown', keyListener);
+            });
+        }
+
+        // --- 2. TIC-TAC-TOE ---
+        function openTicTacToeGame() {
+            let area = document.getElementById('gameArea');
+            area.innerHTML = `
+                <div class="w-full max-w-sm mx-auto bg-slate-900/90 border border-slate-700/60 rounded-2xl p-4 shadow-xl flex flex-col items-center select-none">
+                    <div class="w-full flex items-center justify-between bg-slate-800/80 p-1 rounded-xl mb-3 border border-slate-700/50">
+                        <button id="mode-pvp" class="flex-1 py-1 text-xs font-bold rounded-lg transition-all duration-300 bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow">2 Players</button>
+                        <button id="mode-ai" class="flex-1 py-1 text-xs font-bold rounded-lg transition-all duration-300 text-slate-400 hover:text-slate-200">vs AI</button>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 w-full mb-3 text-center">
+                        <div class="bg-slate-800/80 p-2 rounded-xl border border-cyan-500/30">
+                            <span class="text-[10px] font-bold text-cyan-400 block">PLAYER X</span>
+                            <span id="score-x" class="text-base font-black">0</span>
+                        </div>
+                        <div class="bg-slate-800/80 p-2 rounded-xl border border-slate-700/50">
+                            <span class="text-[10px] font-bold text-slate-400 block">TIES</span>
+                            <span id="score-ties" class="text-base font-black">0</span>
+                        </div>
+                        <div class="bg-slate-800/80 p-2 rounded-xl border border-purple-500/30">
+                            <span class="text-[10px] font-bold text-purple-400 block" id="player-o-label">PLAYER O</span>
+                            <span id="score-o" class="text-base font-black">0</span>
+                        </div>
+                    </div>
+                    <div id="status-display" class="mb-3 text-xs font-semibold text-cyan-300 bg-cyan-950/40 border border-cyan-500/20 px-3 py-1.5 rounded-lg text-center w-full">Player X's Turn</div>
+                    <div id="game-board" class="grid grid-cols-3 gap-2 w-full aspect-square max-w-[220px] mb-3">
+                        ${[0,1,2,3,4,5,6,7,8].map(i => `<button class="cell bg-slate-800/90 border border-slate-700 rounded-xl text-3xl font-extrabold flex items-center justify-center cursor-pointer active:scale-95 shadow" data-index="${i}"></button>`).join('')}
+                    </div>
+                    <div class="flex gap-2 w-full">
+                        <button id="reset-btn" class="flex-1 bg-rose-600 hover:bg-rose-500 text-white font-bold py-1.5 rounded-lg text-xs">Reset</button>
+                        <button id="clear-scores-btn" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold px-3 py-1.5 rounded-lg border border-slate-700 text-xs">Clear</button>
+                    </div>
+                    ${getBackBtnHTML()}
+                </div>
+            `;
+            initTicTacToeEngine();
+        }
+
+        function initTicTacToeEngine() {
+            let tttBoard = ['', '', '', '', '', '', '', '', ''], currentPlayer = 'X', gameActive = true, vsAI = false;
+            let tttScores = { X: 0, O: 0, ties: 0 };
+            const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+            const cells = document.querySelectorAll('#gameArea .cell');
+            const statusDisplay = document.getElementById('status-display');
+
+            document.getElementById('mode-pvp').onclick = () => {
+                vsAI = false;
+                document.getElementById('mode-pvp').className = "flex-1 py-1 text-xs font-bold rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow";
+                document.getElementById('mode-ai').className = "flex-1 py-1 text-xs font-bold rounded-lg text-slate-400";
+                document.getElementById('player-o-label').textContent = "PLAYER O";
+                resetBoard();
+            };
+            document.getElementById('mode-ai').onclick = () => {
+                vsAI = true;
+                document.getElementById('mode-ai').className = "flex-1 py-1 text-xs font-bold rounded-lg bg-gradient-to-r from-purple-500 to-indigo-600 text-white shadow";
+                document.getElementById('mode-pvp').className = "flex-1 py-1 text-xs font-bold rounded-lg text-slate-400";
+                document.getElementById('player-o-label').textContent = "COMPUTER";
+                resetBoard();
+            };
+
+            cells.forEach((c, idx) => {
+                c.onclick = () => {
+                    if(tttBoard[idx] !== '' || !gameActive || (vsAI && currentPlayer === 'O')) return;
+                    makeMove(idx, currentPlayer);
+                    if(gameActive && vsAI && currentPlayer === 'O') setTimeout(aiMove, 350);
+                };
+            });
+
+            function makeMove(i, p) {
+                tttBoard[i] = p;
+                cells[i].textContent = p;
+                cells[i].className = `cell bg-slate-800 border ${p === 'X' ? 'border-cyan-500 text-cyan-400' : 'border-purple-500 text-purple-400'} rounded-xl text-3xl font-extrabold flex items-center justify-center`;
+                check();
+            }
+
+            function check() {
+                let won = false;
+                for(let w of wins) {
+                    if(tttBoard[w[0]] && tttBoard[w[0]] === tttBoard[w[1]] && tttBoard[w[0]] === tttBoard[w[2]]) {
+                        won = true; break;
+                    }
+                }
+                if(won) {
+                    gameActive = false;
+                    tttScores[currentPlayer]++;
+                    updateScores();
+                    statusDisplay.textContent = (currentPlayer === 'X' ? "Player X" : (vsAI ? "Computer" : "Player O")) + " Wins! 🎉";
+                    return;
+                }
+                if(!tttBoard.includes('')) {
+                    gameActive = false;
+                    tttScores.ties++;
+                    updateScores();
+                    statusDisplay.textContent = "It's a Tie! 🤝";
+                    return;
+                }
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                statusDisplay.textContent = currentPlayer === 'X' ? "Player X's Turn" : (vsAI ? "Computer Thinking..." : "Player O's Turn");
+            }
+
+            function updateScores() {
+                document.getElementById('score-x').innerText = tttScores.X;
+                document.getElementById('score-o').innerText = tttScores.O;
+                document.getElementById('score-ties').innerText = tttScores.ties;
+            }
+
+            function aiMove() {
+                if(!gameActive) return;
+                let empty = tttBoard.map((v, i) => v === '' ? i : null).filter(v => v !== null);
+                let move = empty[Math.floor(Math.random() * empty.length)];
+                makeMove(move, 'O');
+            }
+
+            function resetBoard() {
+                tttBoard = ['', '', '', '', '', '', '', '', ''];
+                gameActive = true; currentPlayer = 'X';
+                cells.forEach(c => { c.textContent = ''; c.className = "cell bg-slate-800/90 border border-slate-700 rounded-xl text-3xl font-extrabold flex items-center justify-center"; });
+                statusDisplay.textContent = "Player X's Turn";
+            }
+
+            document.getElementById('reset-btn').onclick = resetBoard;
+            document.getElementById('clear-scores-btn').onclick = () => { tttScores = { X: 0, O: 0, ties: 0 }; updateScores(); resetBoard(); };
+        }
+
+        // --- 3. CHESS (2 PLAYERS & VS AI) ---
+        const pieces = {"r":"♜","n":"♞","b":"♝","q":"♛","k":"♚","p":"♟","R":"♖","N":"♘","B":"♗","Q":"♕","K":"♔","P":"♙"};
+        let board, selected = null, possible = [], currentTurn = 'white', vsAIChess = true, gameOverChess = false;
         let boardElement, statusElement;
 
         function openChessGame() {
             let area = document.getElementById('gameArea');
             area.innerHTML = `
-                <div id="game">
-                    <div id="status">Your turn — White</div>
-                    <div id="board"></div>
-                    <button class="chess-new-btn" onclick="newGame()">New Game</button>
+                <div style="text-align:center; display:flex; flex-direction:column; align-items:center;">
+                    <!-- Mode Switcher -->
+                    <div class="w-full max-w-[280px] flex items-center justify-between bg-slate-800/80 p-1 rounded-xl mb-2.5 border border-slate-700/50">
+                        <button id="chess-mode-ai" onclick="setChessMode(true)" class="flex-1 py-1 text-xs font-bold rounded-lg transition-all duration-300 bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow">vs AI</button>
+                        <button id="chess-mode-pvp" onclick="setChessMode(false)" class="flex-1 py-1 text-xs font-bold rounded-lg transition-all duration-300 text-slate-400 hover:text-slate-200">2 Players</button>
+                    </div>
+
+                    <div id="status" style="height: 22px; font-size: 13px; margin-bottom: 6px; color: #facc15; font-weight: bold;">White's Turn</div>
+                    <div id="board" style="width: 290px; height: 290px; display: grid; grid-template-columns: repeat(8, 1fr); border: 2px solid #475569; border-radius: 6px; overflow: hidden; margin: 0 auto; box-shadow: 0 4px 15px rgba(0,0,0,0.5);"></div>
+                    
+                    <button onclick="newGame()" style="margin-top:10px; padding: 5px 16px; cursor: pointer; background: #10b981; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 11px;">New Game</button>
+                    ${getBackBtnHTML()}
                 </div>
             `;
-            boardElement = document.getElementById("board");
+            if(!document.getElementById('chess-dynamic-style')) {
+                let s = document.createElement('style'); s.id = 'chess-dynamic-style';
+                s.innerHTML = `.square{width:36.25px;height:36.25px;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;user-select:none;}.white{background:#e2e8f0;color:#0f172a;}.black{background:#64748b;color:#f8fafc;}.selected{background:#fde047!important;}.possible{box-shadow:inset 0 0 0 3px #10b981;}`;
+                document.head.appendChild(s);
+            }
+            boardElement = document.getElementById("board"); 
             statusElement = document.getElementById("status");
+            newGame();
+        }
+
+        function setChessMode(isAI) {
+            vsAIChess = isAI;
+            const btnAI = document.getElementById('chess-mode-ai');
+            const btnPvP = document.getElementById('chess-mode-pvp');
+            if(btnAI && btnPvP) {
+                if(vsAIChess) {
+                    btnAI.className = "flex-1 py-1 text-xs font-bold rounded-lg bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow";
+                    btnPvP.className = "flex-1 py-1 text-xs font-bold rounded-lg text-slate-400 hover:text-slate-200";
+                } else {
+                    btnPvP.className = "flex-1 py-1 text-xs font-bold rounded-lg bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow";
+                    btnAI.className = "flex-1 py-1 text-xs font-bold rounded-lg text-slate-400 hover:text-slate-200";
+                }
+            }
             newGame();
         }
 
@@ -180,193 +527,410 @@
                 ["P","P","P","P","P","P","P","P"],
                 ["R","N","B","Q","K","B","N","R"]
             ];
-            selected = null;
-            possible = [];
-            playerTurn = true;
-            gameOver = false;
-            if(statusElement) statusElement.textContent = "Your turn — White";
-            draw();
+            selected = null; 
+            possible = []; 
+            currentTurn = 'white'; 
+            gameOverChess = false;
+            updateChessStatus();
+            drawChess();
         }
 
-        function draw(){
+        function updateChessStatus() {
+            if(!statusElement) return;
+            if(gameOverChess) return;
+            if(vsAIChess) {
+                statusElement.textContent = currentTurn === 'white' ? "Your Turn — White" : "AI Thinking...";
+            } else {
+                statusElement.textContent = currentTurn === 'white' ? "White's Turn (Player 1)" : "Black's Turn (Player 2)";
+            }
+        }
+
+        function drawChess(){
             if(!boardElement) return;
             boardElement.innerHTML = "";
             for(let r=0; r<8; r++){
                 for(let c=0; c<8; c++){
-                    let square = document.createElement("div");
-                    square.className = "square " + ((r+c)%2 === 0 ? "white" : "black");
-
-                    if(selected && selected[0] === r && selected[1] === c){
-                        square.classList.add("selected");
-                    }
-                    if(possible.some(m => m[0] === r && m[1] === c)){
-                        square.classList.add("possible");
-                    }
-
-                    let piece = board[r][c];
-                    square.textContent = piece ? pieces[piece] : "";
-                    square.onclick = function(){ playerClick(r, c); };
-                    boardElement.appendChild(square);
+                    let sq = document.createElement("div");
+                    sq.className = "square " + ((r+c)%2 === 0 ? "white" : "black");
+                    if(selected && selected[0] === r && selected[1] === c) sq.classList.add("selected");
+                    if(possible.some(m => m[0] === r && m[1] === c)) sq.classList.add("possible");
+                    let p = board[r][c];
+                    sq.textContent = p ? pieces[p] : "";
+                    sq.onclick = () => playerClickChess(r, c);
+                    boardElement.appendChild(sq);
                 }
             }
         }
 
-        function playerClick(r, c){
-            if(gameOver || !playerTurn) return;
-            let piece = board[r][c];
+        function playerClickChess(r, c){
+            if(gameOverChess) return;
+            if(vsAIChess && currentTurn === 'black') return;
 
+            let p = board[r][c];
+
+            // If a piece is already selected and target is a valid move
             if(selected){
-                let valid = possible.some(m => m[0] === r && m[1] === c);
-                if(valid){
-                    makeMove(selected[0], selected[1], r, c);
-                    selected = null;
+                if(possible.some(m => m[0] === r && m[1] === c)){
+                    makeMoveChess(selected[0], selected[1], r, c);
+                    selected = null; 
                     possible = [];
-                    if(!gameOver){
-                        playerTurn = false;
-                        statusElement.textContent = "PC is thinking...";
-                        draw();
-                        setTimeout(pcMove, 700);
+
+                    if(!gameOverChess){
+                        currentTurn = currentTurn === 'white' ? 'black' : 'white';
+                        updateChessStatus();
+                        drawChess();
+
+                        if(vsAIChess && currentTurn === 'black') {
+                            setTimeout(pcMoveChess, 500);
+                        }
                     }
                     return;
                 }
-                selected = null;
+                selected = null; 
                 possible = [];
             }
 
-            if(piece && piece === piece.toUpperCase()){
-                selected = [r, c];
-                possible = getMoves(r, c, board);
+            // Select a piece matching the current player's color
+            if(p){
+                let isPieceWhite = (p === p.toUpperCase());
+                if((currentTurn === 'white' && isPieceWhite) || (currentTurn === 'black' && !isPieceWhite)) {
+                    selected = [r, c]; 
+                    possible = getMovesChess(r, c, board);
+                }
             }
-            draw();
+            drawChess();
         }
 
-        function makeMove(r1, c1, r2, c2){
-            let captured = board[r2][c2];
-            let piece = board[r1][c1];
-            board[r2][c2] = piece;
+        function makeMoveChess(r1, c1, r2, c2){
+            let cap = board[r2][c2], p = board[r1][c1];
+            board[r2][c2] = p; 
             board[r1][c1] = "";
 
-            if(piece === "P" && r2 === 0) board[r2][c2] = "Q";
-            if(piece === "p" && r2 === 7) board[r2][c2] = "q";
+            // Pawn promotion
+            if(p === "P" && r2 === 0) board[r2][c2] = "Q";
+            if(p === "p" && r2 === 7) board[r2][c2] = "q";
 
-            if(captured && captured.toLowerCase() === "k"){
-                gameOver = true;
-                if(piece === piece.toUpperCase()){
-                    statusElement.textContent = "🎉 YOU WIN!";
+            // Win condition (King captured)
+            if(cap && cap.toLowerCase() === "k"){ 
+                gameOverChess = true; 
+                let isWhiteWinner = (p === p.toUpperCase());
+                if(vsAIChess) {
+                    statusElement.textContent = isWhiteWinner ? "🎉 YOU WIN!" : "🤖 AI WINS!";
                 } else {
-                    statusElement.textContent = "🤖 PC WINS!";
+                    statusElement.textContent = isWhiteWinner ? "🎉 White Wins!" : "🎉 Black Wins!";
                 }
             }
-            draw();
+            drawChess();
         }
 
-        function getMoves(r, c, b){
-            let piece = b[r][c];
-            if(!piece) return [];
-            let white = piece === piece.toUpperCase();
-            let type = piece.toLowerCase();
-            let result = [];
-
+        function getMovesChess(r, c, b){
+            let p = b[r][c]; if(!p) return [];
+            let white = p === p.toUpperCase(), t = p.toLowerCase(), res = [];
             function add(rr, cc){
                 if(rr < 0 || rr > 7 || cc < 0 || cc > 7) return false;
-                let target = b[rr][cc];
-                if(target === ""){
-                    result.push([rr, cc]);
-                    return true;
-                }
-                if(target && (target === target.toUpperCase()) !== white){
-                    result.push([rr, cc]);
-                }
+                let tar = b[rr][cc];
+                if(tar === ""){ res.push([rr, cc]); return true; }
+                if((tar === tar.toUpperCase()) !== white) res.push([rr, cc]);
                 return false;
             }
-
-            if(type === "p"){
-                let direction = white ? -1 : 1;
-                let start = white ? 6 : 1;
-                if(r + direction >= 0 && r + direction < 8 && b[r + direction][c] === ""){
-                    result.push([r + direction, c]);
-                    if(r === start && b[r + 2 * direction][c] === ""){
-                        result.push([r + 2 * direction, c]);
-                    }
-                }
-                for(let dc of [-1, 1]){
-                    let rr = r + direction;
-                    let cc = c + dc;
-                    if(rr >= 0 && rr < 8 && cc >= 0 && cc < 8 && b[rr][cc] && b[rr][cc] !== "" && (b[rr][cc] === b[rr][cc].toUpperCase()) !== white){
-                        result.push([rr, cc]);
-                    }
-                }
+            if(t === "p"){
+                let d = white ? -1 : 1, st = white ? 6 : 1;
+                if(b[r+d] && b[r+d][c] === ""){ res.push([r+d, c]); if(r === st && b[r+2*d][c] === "") res.push([r+2*d, c]); }
+                for(let dc of [-1, 1]) { let rr = r+d, cc = c+dc; if(rr>=0 && rr<8 && cc>=0 && cc<8 && b[rr][cc] && (b[rr][cc]===b[rr][cc].toUpperCase())!==white) res.push([rr, cc]); }
             }
-
-            if(type === "n"){
-                let jumps = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
-                for(let j of jumps) add(r + j[0], c + j[1]);
+            if(t === "n") [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]].forEach(j=>add(r+j[0], c+j[1]));
+            if(t === "k") for(let dr=-1;dr<=1;dr++) for(let dc=-1;dc<=1;dc++) if(dr||dc) add(r+dr, c+dc);
+            if(t === "b" || t === "q") slide([[1,1],[1,-1],[-1,1],[-1,-1]]);
+            if(t === "r" || t === "q") slide([[1,0],[-1,0],[0,1],[0,-1]]);
+            function slide(dirs){
+                dirs.forEach(d => {
+                    let rr = r+d[0], cc = c+d[1];
+                    while(rr>=0 && rr<8 && cc>=0 && cc<8){ if(!add(rr,cc)) break; rr+=d[0]; cc+=d[1]; }
+                });
             }
-
-            if(type === "k"){
-                for(let dr=-1; dr<=1; dr++){
-                    for(let dc=-1; dc<=1; dc++){
-                        if(dr !== 0 || dc !== 0) add(r + dr, c + dc);
-                    }
-                }
-            }
-
-            if(type === "b" || type === "q"){
-                slide([[1,1],[1,-1],[-1,1],[-1,-1]]);
-            }
-
-            if(type === "r" || type === "q"){
-                slide([[1,0],[-1,0],[0,1],[0,-1]]);
-            }
-
-            function slide(directions){
-                for(let d of directions){
-                    let rr = r + d[0];
-                    let cc = c + d[1];
-                    while(rr >= 0 && rr < 8 && cc >= 0 && cc < 8){
-                        if(!add(rr, cc)) break;
-                        rr += d[0];
-                        cc += d[1];
-                    }
-                }
-            }
-            return result;
+            return res;
         }
 
-        function pcMove(){
-            if(gameOver) return;
+        function pcMoveChess(){
+            if(gameOverChess) return;
             let all = [];
             for(let r=0; r<8; r++){
                 for(let c=0; c<8; c++){
-                    let piece = board[r][c];
-                    if(piece && piece === piece.toLowerCase()){
-                        let moves = getMoves(r, c, board);
-                        for(let m of moves){
-                            all.push({ r1: r, c1: c, r2: m[0], c2: m[1], capture: board[m[0]][m[1]] !== "" });
-                        }
+                    if(board[r][c] && board[r][c] === board[r][c].toLowerCase()){
+                        getMovesChess(r, c, board).forEach(m => all.push({r1:r, c1:c, r2:m[0], c2:m[1], cap: board[m[0]][m[1]]!==""}));
                     }
                 }
             }
-
-            if(all.length === 0){
-                gameOver = true;
-                statusElement.textContent = "🎉 YOU WIN!";
-                return;
+            if(!all.length){ 
+                gameOverChess = true; 
+                statusElement.textContent = "🎉 YOU WIN!"; 
+                return; 
             }
+            let caps = all.filter(x => x.cap);
+            let move = (caps.length ? caps : all)[Math.floor(Math.random() * (caps.length ? caps.length : all.length))];
+            makeMoveChess(move.r1, move.c1, move.r2, move.c2);
 
-            let captures = all.filter(x => x.capture);
-            let choices = captures.length ? captures : all;
-            let move = choices[Math.floor(Math.random() * choices.length)];
-
-            makeMove(move.r1, move.c1, move.r2, move.c2);
-
-            if(!gameOver){
-                playerTurn = true;
-                statusElement.textContent = "Your turn — White";
-                draw();
+            if(!gameOverChess){ 
+                currentTurn = 'white'; 
+                updateChessStatus(); 
+                drawChess(); 
             }
         }
-    </script>
 
+        // --- 4. BATTLE EMOJI SNAKE ---
+        function openEmojiSnakeGame() {
+            let area = document.getElementById('gameArea');
+            area.innerHTML = `
+                <div style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+                    <div style="display: flex; gap: 15px; margin-bottom: 4px; font-size: 12px;">
+                        <div>Score: <span id="snakeScore" style="color: #facc15; font-weight: bold;">0</span></div>
+                        <div>Length: <span id="snakeLength" style="color: #4ade80; font-weight: bold;">15</span></div>
+                    </div>
+                    <div style="position: relative;">
+                        <canvas id="gameCanvas" width="320" height="260" style="background:#090d16; border-radius:8px; border:2px solid #334155; cursor:crosshair;"></canvas>
+                        <div id="snakeMenuOverlay" style="position: absolute; inset: 0; background: rgba(15,23,42,0.92); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; border-radius: 8px;">
+                            <h3 class="arcade-font" style="color: #facc15; font-size: 14px; margin-bottom: 6px;">Choose Your Emoji</h3>
+                            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 10px;">
+                                <button class="emoji-btn" data-emoji="😜" style="background:#334155; border:2px solid #facc15; border-radius:6px; font-size:16px; padding:4px; cursor:pointer;">😜</button>
+                                <button class="emoji-btn" data-emoji="😎" style="background:#334155; border:2px solid #334155; border-radius:6px; font-size:16px; padding:4px; cursor:pointer;">😎</button>
+                                <button class="emoji-btn" data-emoji="😍" style="background:#334155; border:2px solid #334155; border-radius:6px; font-size:16px; padding:4px; cursor:pointer;">😍</button>
+                                <button class="emoji-btn" data-emoji="🥶" style="background:#334155; border:2px solid #334155; border-radius:6px; font-size:16px; padding:4px; cursor:pointer;">🥶</button>
+                            </div>
+                            <button id="snakeStartBtn" style="padding: 5px 14px; background: #ec4899; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 11px;">PLAY BATTLE 🚀</button>
+                        </div>
+                    </div>
+                    ${getBackBtnHTML()}
+                </div>
+            `;
+            initBattleSnakeEngine();
+        }
+
+        function initBattleSnakeEngine() {
+            const canvas = document.getElementById("gameCanvas");
+            if (!canvas) return;
+            const ctx = canvas.getContext("2d");
+            let selectedEmoji = "😜", gameState = "MENU", score = 0, gameLoopId = null;
+            let player = { x: 160, y: 130, angle: 0, speed: 3.5, radius: 10, emoji: "😜", trail: [], length: 15 };
+            let foods = [], targetX = player.x, targetY = player.y;
+
+            document.querySelectorAll(".emoji-btn").forEach(btn => {
+                btn.onclick = () => {
+                    document.querySelectorAll(".emoji-btn").forEach(b => b.style.borderColor = "#334155");
+                    btn.style.borderColor = "#facc15";
+                    selectedEmoji = btn.getAttribute("data-emoji");
+                };
+            });
+
+            document.getElementById("snakeStartBtn").onclick = () => {
+                document.getElementById("snakeMenuOverlay").style.display = "none";
+                player.emoji = selectedEmoji; player.x = 160; player.y = 130; player.length = 15; player.trail = []; score = 0;
+                foods = [];
+                for(let i=0; i<40; i++) foods.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, radius: 3.5, color: ["#f43f5e","#3b82f6","#10b981","#facc15"][Math.floor(Math.random()*4)]});
+                gameState = "PLAYING";
+                if(gameLoopId) cancelAnimationFrame(gameLoopId);
+                loop();
+            };
+
+            canvas.onmousemove = (e) => {
+                if(gameState !== "PLAYING") return;
+                const r = canvas.getBoundingClientRect();
+                targetX = e.clientX - r.left; targetY = e.clientY - r.top;
+            };
+
+            function loop() {
+                if(gameState !== "PLAYING") return;
+                let angleDiff = Math.atan2(targetY - player.y, targetX - player.x) - player.angle;
+                while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
+                while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
+                player.angle += angleDiff * 0.12;
+                player.x += Math.cos(player.angle) * player.speed;
+                player.y += Math.sin(player.angle) * player.speed;
+
+                if (player.x < 10 || player.x > canvas.width-10 || player.y < 10 || player.y > canvas.height-10) {
+                    gameState = "OVER";
+                    alert("Game Over! Score: " + score);
+                    document.getElementById("snakeMenuOverlay").style.display = "flex";
+                    return;
+                }
+
+                player.trail.unshift({x: player.x, y: player.y});
+                while(player.trail.length > player.length * 3) player.trail.pop();
+
+                foods.forEach((f, idx) => {
+                    if (Math.hypot(player.x - f.x, player.y - f.y) < player.radius + f.radius) {
+                        score += 10; player.length++;
+                        foods[idx] = {x: Math.random()*canvas.width, y: Math.random()*canvas.height, radius: 3.5, color: "#facc15"};
+                    }
+                });
+
+                ctx.clearRect(0,0,canvas.width,canvas.height);
+                foods.forEach(f => { ctx.fillStyle = f.color; ctx.beginPath(); ctx.arc(f.x, f.y, f.radius, 0, Math.PI*2); ctx.fill(); });
+                player.trail.forEach((p, i) => { if(i%3===0){ ctx.fillStyle = "#6366f1"; ctx.beginPath(); ctx.arc(p.x, p.y, 8, 0, Math.PI*2); ctx.fill(); } });
+                ctx.font = "20px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+                ctx.fillText(player.emoji, player.x, player.y);
+
+                document.getElementById("snakeScore").innerText = score;
+                document.getElementById("snakeLength").innerText = player.length;
+                gameLoopId = requestAnimationFrame(loop);
+            }
+        }
+
+        // --- 5. CLASSIC SNAKE ---
+        function openClassicSnakeGame() {
+            let area = document.getElementById('gameArea');
+            area.innerHTML = `
+                <div style="text-align:center; display:flex; flex-direction:column; align-items:center;">
+                    <div style="font-size: 13px; margin-bottom: 4px; font-weight: bold; color: #facc15;">Score: <span id="classicScore">0</span></div>
+                    <canvas id="classicCanvas" width="260" height="260" style="border: 2px solid #ffcc00; background-color: #000000; border-radius:8px;"></canvas>
+                    <div style="margin-top: 5px; font-size: 11px; color: #94a3b8;">Use Arrow Keys (← ↑ ↓ →) to Play</div>
+                    ${getBackBtnHTML()}
+                </div>
+            `;
+            initClassicSnakeEngine();
+        }
+
+        function initClassicSnakeEngine() {
+            const canvas = document.getElementById("classicCanvas");
+            if (!canvas) return;
+            const ctx = canvas.getContext("2d");
+            const gridSize = 20, tileCount = canvas.width / gridSize;
+            let snake = [{ x: 6, y: 6 }], velocityX = 0, velocityY = 0, foodX = 3, foodY = 3, score = 0;
+
+            function gameLoop() {
+                const head = { x: snake[0].x + velocityX, y: snake[0].y + velocityY };
+                if (head.x === foodX && head.y === foodY) {
+                    score += 10;
+                    document.getElementById("classicScore").innerText = score;
+                    foodX = Math.floor(Math.random() * tileCount);
+                    foodY = Math.floor(Math.random() * tileCount);
+                } else if (velocityX !== 0 || velocityY !== 0) {
+                    snake.pop();
+                }
+                if (velocityX !== 0 || velocityY !== 0) snake.unshift(head);
+
+                if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
+                    alert("Game Over! Score: " + score);
+                    snake = [{ x: 6, y: 6 }]; velocityX = 0; velocityY = 0; score = 0;
+                    document.getElementById("classicScore").innerText = score;
+                }
+
+                ctx.fillStyle = "#000000"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.font = "14px Arial"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+                ctx.fillText("🍎", (foodX * gridSize) + 10, (foodY * gridSize) + 10);
+                snake.forEach((part, index) => {
+                    ctx.fillText(index === 0 ? "🟢" : "🟩", (part.x * gridSize) + 10, (part.y * gridSize) + 10);
+                });
+            }
+
+            let interval = setInterval(gameLoop, 130);
+            const keyHandler = (e) => {
+                if (e.key === "ArrowLeft" && velocityX === 0) { velocityX = -1; velocityY = 0; }
+                else if (e.key === "ArrowUp" && velocityY === 0) { velocityX = 0; velocityY = -1; }
+                else if (e.key === "ArrowRight" && velocityX === 0) { velocityX = 1; velocityY = 0; }
+                else if (e.key === "ArrowDown" && velocityY === 0) { velocityX = 0; velocityY = 1; }
+            };
+            window.addEventListener("keydown", keyHandler);
+            document.querySelector("button[onclick='location.reload()']").addEventListener("click", () => {
+                clearInterval(interval); window.removeEventListener("keydown", keyHandler);
+            });
+        }
+
+        // --- 6. 3D COIN FLIP ---
+        function openCoinFlipGame() {
+            let area = document.getElementById('gameArea');
+            area.innerHTML = `
+                <div style="text-align:center; display:flex; flex-direction:column; align-items:center; width: 100%;">
+                    <div class="perspective-container py-3 flex justify-center items-center">
+                        <div id="coin" class="coin">
+                            <div class="coin-face coin-heads">
+                                <i class="fa-solid fa-crown text-3xl mb-1"></i>
+                                <span class="text-[10px] font-black uppercase">HEADS</span>
+                            </div>
+                            <div class="coin-face coin-tails">
+                                <i class="fa-solid fa-shield-halved text-3xl mb-1"></i>
+                                <span class="text-[10px] font-black uppercase">TAILS</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="coinResultText" class="text-xs font-bold text-amber-400 my-2">Click below or tap coin to flip</div>
+                    <button id="coinFlipBtn" style="padding: 6px 16px; background: #f59e0b; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 12px;">Flip Coin 🪙</button>
+                    ${getBackBtnHTML()}
+                </div>
+            `;
+            const coin = document.getElementById('coin'), btn = document.getElementById('coinFlipBtn'), txt = document.getElementById('coinResultText');
+            let isFlipping = false, rY = 0;
+            function flip() {
+                if(isFlipping) return;
+                isFlipping = true; btn.disabled = true;
+                const isHeads = Math.random() < 0.5;
+                rY += 1800 + (isHeads ? 0 : 180);
+                coin.style.transition = 'transform 1s cubic-bezier(0.15, 0.85, 0.15, 1)';
+                coin.style.transform = `rotateY(${rY}deg)`;
+                setTimeout(() => {
+                    isFlipping = false; btn.disabled = false;
+                    txt.textContent = `Result: ${isHeads ? 'HEADS 👑' : 'TAILS 🛡️'}!`;
+                }, 1000);
+            }
+            btn.onclick = flip; coin.onclick = flip;
+        }
+
+        // --- 7. DICE ROLLER ---
+        function openDiceRollerGame() {
+            let area = document.getElementById('gameArea');
+            area.innerHTML = `
+                <div class="w-full flex flex-col items-center max-w-sm mx-auto text-center">
+                    <div id="dice-display" class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-600 text-white font-black text-3xl flex items-center justify-center shadow-lg border border-white/20 mb-4">6</div>
+                    <button id="rollBtn" class="py-2 px-6 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold text-xs uppercase tracking-wider shadow active:scale-95 transition-all">Roll Dice 🎲</button>
+                    ${getBackBtnHTML()}
+                </div>
+            `;
+            const d = document.getElementById('dice-display'), btn = document.getElementById('rollBtn');
+            btn.onclick = () => {
+                d.classList.add('rolling');
+                btn.disabled = true;
+                setTimeout(() => {
+                    d.classList.remove('rolling');
+                    d.innerText = Math.floor(Math.random() * 6) + 1;
+                    btn.disabled = false;
+                }, 800);
+            };
+        }
+
+        // --- 8. MEMORY MATCH ---
+        function openMemoryGame() {
+            let area = document.getElementById('gameArea');
+            area.innerHTML = `
+                <div style="text-align:center; display:flex; flex-direction:column; align-items:center;">
+                    <div style="font-size: 13px; margin-bottom: 6px; color: #34d399; font-weight: bold;">Find matching pairs!</div>
+                    <div id="memoryGrid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; width: 240px; margin: 0 auto;"></div>
+                    ${getBackBtnHTML()}
+                </div>
+            `;
+            const emojis = ['🚀','🚀','⭐','⭐','🔥','🔥','💎','💎'].sort(() => Math.random() - 0.5);
+            let grid = document.getElementById('memoryGrid'), first = null, lock = false, matches = 0;
+            emojis.forEach(e => {
+                let card = document.createElement('div');
+                card.style.cssText = 'height: 48px; background: #334155; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; user-select: none;';
+                card.textContent = '❓';
+                card.onclick = () => {
+                    if(lock || card === first || card.classList.contains('matched')) return;
+                    card.textContent = e; card.style.background = '#475569';
+                    if(!first) { first = card; return; }
+                    if(first.textContent === card.textContent) {
+                        first.classList.add('matched'); card.classList.add('matched'); first = null; matches++;
+                        if(matches === 4) setTimeout(() => alert('🎉 You Won!'), 200);
+                    } else {
+                        lock = true;
+                        setTimeout(() => {
+                            first.textContent = '❓'; first.style.background = '#334155';
+                            card.textContent = '❓'; card.style.background = '#334155';
+                            first = null; lock = false;
+                        }, 500);
+                    }
+                };
+                grid.appendChild(card);
+            });
+        }
+    </script>
 </body>
 </html>
